@@ -2,6 +2,7 @@ import csv
 
 from .battery import Battery
 from .house import House
+from .cable import Cable
 
 
 class District():
@@ -46,11 +47,13 @@ class District():
         return houses
 
     
-    def add_cable(self):
+    def add_cable(self, battery, house):
         """
         Adds a cable object
         """
-        pass
+        cable = Cable(battery,house)
+
+        self.cables.append(cable)
 
 
     def check_capacities(self):

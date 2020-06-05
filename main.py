@@ -12,6 +12,7 @@ if __name__ == "__main__":
     # make a test district to print
     test_district = district.District(uid, batteries_file, houses_file)
 
+    # print the batteries and houses
     print("BATTERIES")
 
     for battery in test_district.batteries:
