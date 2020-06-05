@@ -1,5 +1,6 @@
 from code.classes import district
 from code.algorithms import randomize
+from code.visualization import draw
 
 if __name__ == "__main__":
 
@@ -12,6 +13,7 @@ if __name__ == "__main__":
 
     # make a test district to print
     test_district = district.District(uid, batteries_file, houses_file)
+    house = test_district.houses[47]
 
     # run random algorithm
     randomize.random_solution(test_district)
@@ -25,6 +27,8 @@ if __name__ == "__main__":
     cables = costs["cables"]
     batteries = costs["batteries"]
 
+    # draw plot
+    draw.plot(test_district)
 
     print(f"Total cost of the district:{total}")
     print(f"Total cost of the cables:{cables}")
