@@ -13,13 +13,28 @@ class Battery():
         self.houses = []
         self.cables = []
 
-    def add_house(self, house_id):
+    def add_house(self, house):
         # add house to battery
-        self.houses.append(house_id)
+        self.houses.append(house)
 
     def get_location(self):
         # get location of battery
         return self.location
+
+    def update_usage(self, house):
+        """
+        Updates the usage of the battery
+        """
+
+        output = house.get_output
+        self.usage += output
+
+    def reset_usage(self):
+        """
+        resets the batteries usage
+        """
+
+        self.usage = 0
 
     def check_capacity(self):
         """
