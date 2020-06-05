@@ -8,7 +8,7 @@ class Battery():
         self.capacity = capacity
         self.cost = BATTERY_COST
 
-        # attributes to create the data structure
+        # attributes to create the grid network
         self.usage = 0
         self.houses = []
         self.cables = []
@@ -28,6 +28,10 @@ class Battery():
         """
         return self.capacity >= self.usage
 
+    def add_cable(self, cable_path):
+        # CONCEPT
+        self.cables.append(cable_path)
+        
 
     
 
