@@ -55,10 +55,29 @@ class District():
 
         self.cables.append(cable)
 
+        # update the usage of the battery
+        battery.update_usage(house)
+
+    
+    def get_batteries(self):
+        """
+        Returns a list of battery objects in the district
+        """
+
+        return self.batteries
+
+    
+    def get_houses(self):
+        """
+        Returns a list of house objects in the district
+        """
+
+        return self.houses
+
 
     def check_capacities(self):
         """
-        Returns if all batteries are within capacity
+        Returns if the usage of all batteries are within capacity
         """
 
         for battery in self.batteries:
@@ -67,6 +86,16 @@ class District():
                 return False
         
         return True
+
+    def reset_cables(self):
+        """
+        Resets the connections between the batteries and houses
+        """
+
+        self.cables = []
+
+        for battery in self.batteries:
+            battery.reset_usage()
 
 
     def calculate_cost(self):
