@@ -1,5 +1,5 @@
 class Cable():
-    def __init__(self, house, battery):
+    def __init__(self, battery, house):
         self.house = house
         self.battery = battery
         self.path = self.cable_path(house, battery)
