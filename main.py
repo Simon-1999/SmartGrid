@@ -15,3 +15,12 @@ if __name__ == "__main__":
 
     # run random algorithm
     randomize.random_solution(test_district)
+
+    # return the total cost of the district
+    costs = test_district.calc_costs()
+    total = costs["total"]
+    cables = costs["cables"]
+    batteries = costs["batteries"]
+
+
+    print(f"Total cost of the district:{total}")

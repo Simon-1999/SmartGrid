@@ -43,6 +43,12 @@ class Battery():
         """
         return self.capacity < self.usage
 
+    def get_cost(self):
+        """
+        Returns the cost of the battery
+        """
+        return self.cost
+
     def add_cable(self, cable_path):
         # CONCEPT
         self.cables.append(cable_path)

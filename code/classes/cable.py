@@ -34,3 +34,11 @@ class Cable():
         """ Returns length of cable """  
         return len(self.path) - 1
 
+    def get_cost(self):
+        """
+        Returns the cost of the pathway
+        """
+        length = self.calc_length()
+        total = 9 * length
+
+        return total

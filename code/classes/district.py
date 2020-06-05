@@ -99,8 +99,31 @@ class District():
             battery.reset_usage()
 
 
-    def calculate_cost(self):
-        pass
+    def calc_costs(self):
+        """
+        Calculates the total cost of the district
+        """
+
+        cables_cost = 0
+        batt_cost = 0
+
+        # add the costs of the cables
+        for cable in self.cables:
+            cables_cost += cable.get_cost()
+
+        # add the costs of the batteries
+        for battery in self.batteries:
+            batt_cost += battery.get_cost()
+
+        costs = {
+            "cables": cables_cost,
+            "batt_cost": batt_cost,
+            "total": cables_cost + batt_cost
+        }
+
+        return costs
+
+        
 
     def draw_district(self):
         pass
