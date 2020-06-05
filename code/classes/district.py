@@ -5,8 +5,8 @@ from .house import House
 
 
 class District():
-    def __init__(self, batteries_file, houses_file):
-        self.id = None
+    def __init__(self, uid, batteries_file, houses_file):
+        self.id = uid
         self.batteries = self.load_batteries(batteries_file)
         self.houses = self.load_houses(houses_file)
         self.cables = []
@@ -25,7 +25,7 @@ class District():
                 # conver the location coordinates in a tuple
                 location = tuple(row["positie"].split(","))
                 capacity = row["capaciteit"]
-                batteries = Battery(i, location, capacity)
+                batteries.append(Battery(i, location, capacity))
 
         return batteries
 
@@ -39,9 +39,9 @@ class District():
             reader = csv.DictReader(in_file)
             
             for i, row in enumerate(reader):
-                location = tuple(row["x"], row["y"])
-                output = row["output"]
-                houses = House(i, location, output)
+                location = tuple((row["x"], row["y"]))
+                output = row["maxoutput"]
+                houses.append(House(i, location, output))
 
         return houses
 

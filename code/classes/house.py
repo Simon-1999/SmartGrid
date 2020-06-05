@@ -8,4 +8,7 @@ class House():
     def get_location(self):
         """ Returns location """
     
-        return location
+        return self.location
+
+    def __repr__(self):
+        return f"Id: {self.id} Location: {self.location}"

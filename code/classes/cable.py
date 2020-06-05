@@ -7,4 +7,4 @@ class Cable():
     def calc_length(self):
         """ Returns length of cable """
         
-        return len(path)
+        return len(self.path)

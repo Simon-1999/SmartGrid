@@ -31,6 +31,9 @@ class Battery():
     def add_cable(self, cable_path):
         # CONCEPT
         self.cables.append(cable_path)
+
+    def __repr__(self):
+        return f"Id: {self.id} Location: {self.location}"
         
 
     
