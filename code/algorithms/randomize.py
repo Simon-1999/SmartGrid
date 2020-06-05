@@ -1,4 +1,5 @@
 import random 
+import numpy as np 
 
 def random_solution(district):
     """ 
@@ -41,14 +42,16 @@ def add_cables(district, batteries, houses):
     Assign houses to batteries
     """
 
-    # loop through battery
-    for battery in batteries:
+    for house in houses:
+        usages = []
+        for battery in batteries:
+            usages.append(battery.usage)
+        
+        least_used_batt = batteries[np.argmin(usages)]
 
-        # loop through 30 houses
-        for house in houses[(battery.id*30):(battery.id*30 + 30)]:
+        # add cable between the house and the chosen battery
+        district.add_cable(least_used_batt, house)
 
-            # add cable to 30 houses
-            district.add_cable(battery, house)
             
 def print_usage(district):
     batteries = district.get_batteries()
