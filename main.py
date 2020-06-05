@@ -1,4 +1,5 @@
 from code.classes import district
+from code.algorithms import randomize
 
 if __name__ == "__main__":
 
@@ -12,24 +13,5 @@ if __name__ == "__main__":
     # make a test district to print
     test_district = district.District(uid, batteries_file, houses_file)
 
-    # print the batteries and houses
-    print("BATTERIES")
-
-    for battery in test_district.batteries:
-        print(battery)
-
-    print("HOUSES")
-
-    for house in test_district.houses:
-        print(house)
-
-    print("=======================")
-
-    test_house = test_district.get_houses()[0]
-    test_batt = test_district.get_batteries()[0]
-
-    test_district.add_cable(test_batt, test_house)
-
-    test_cable = test_district.cables[0]
-
-    print(test_cable.path)
+    # run random algorithm
+    randomize.random_solution(test_district)

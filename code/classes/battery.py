@@ -36,12 +36,12 @@ class Battery():
 
         self.usage = 0
 
-    def check_capacity(self):
+    def is_overload(self):
         """
         Returns whether usage is still allowed within the battery's 
         capacity.
         """
-        return self.capacity >= self.usage
+        return self.capacity < self.usage
 
     def add_cable(self, cable_path):
         # CONCEPT

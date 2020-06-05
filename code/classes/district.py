@@ -76,17 +76,17 @@ class District():
         return self.houses
 
 
-    def check_capacities(self):
+    def is_overload(self):
         """
         Returns if the usage of all batteries are within capacity
         """
 
         for battery in self.batteries:
 
-            if not battery.check_capacity():
-                return False
+            if battery.is_overload():
+                return True
         
-        return True
+        return False
 
     def reset_cables(self):
         """
