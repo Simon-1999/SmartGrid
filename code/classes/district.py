@@ -23,9 +23,10 @@ class District():
 
             for i, row in enumerate(reader):
 
-                # conver the location coordinates in a tuple
-                location = tuple(row["positie"].split(","))
-                capacity = row["capaciteit"]
+                # convert the location coordinates in a tuple of integers
+                location = tuple(map(int, row["positie"].split(",")))
+
+                capacity = float(row["capaciteit"])
                 batteries.append(Battery(i, location, capacity))
 
         return batteries
@@ -40,8 +41,8 @@ class District():
             reader = csv.DictReader(in_file)
             
             for i, row in enumerate(reader):
-                location = tuple((row["x"], row["y"]))
-                output = row["maxoutput"]
+                location = tuple((int(row["x"]), int(row["y"])))
+                output = float(row["maxoutput"])
                 houses.append(House(i, location, output))
 
         return houses
@@ -51,7 +52,7 @@ class District():
         """
         Adds a cable object
         """
-        cable = Cable(battery,house)
+        cable = Cable(battery, house)
 
         self.cables.append(cable)
 

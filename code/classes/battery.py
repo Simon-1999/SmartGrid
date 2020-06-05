@@ -26,7 +26,7 @@ class Battery():
         Updates the usage of the battery
         """
 
-        output = house.get_output
+        output = house.get_output()
         self.usage += output
 
     def reset_usage(self):

@@ -23,3 +23,13 @@ if __name__ == "__main__":
     for house in test_district.houses:
         print(house)
 
+    print("=======================")
+
+    test_house = test_district.get_houses()[0]
+    test_batt = test_district.get_batteries()[0]
+
+    test_district.add_cable(test_batt, test_house)
+
+    test_cable = test_district.cables[0]
+
+    print(test_cable.path)
