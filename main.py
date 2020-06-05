@@ -16,6 +16,9 @@ if __name__ == "__main__":
     # run random algorithm
     randomize.random_solution(test_district)
 
+    # print the number of cables to check
+    print(len(test_district.cables))
+
     # return the total cost of the district
     costs = test_district.calc_costs()
     total = costs["total"]
