@@ -10,5 +10,12 @@ class House():
     
         return self.location
 
+    def get_output(self):
+        """ 
+        Get the output energy of a house
+        """
+
+        return self.output
+        
     def __repr__(self):
         return f"Id: {self.id} Location: {self.location}"
