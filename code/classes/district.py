@@ -53,6 +53,7 @@ class District():
         Adds a cable object
         """
         cable = Cable(battery, house)
+        house.cable = cable
 
         self.cables.append(cable)
 
