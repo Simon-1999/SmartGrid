@@ -7,9 +7,10 @@ def random_solution(district):
 
     batteries = district.get_batteries()
     houses = district.get_houses()
+    i = 0
     
     # making configurations until no battery is overloaded
-    for i in range(10):
+    while True:
 
         # remove cable connections
         district.reset_cables()
@@ -20,13 +21,13 @@ def random_solution(district):
         # add cable connections
         add_cables(district, batteries, houses)
 
-        print_usage(district)
         if not district.is_overload():
             break
         
-        print("solution not found, reset")
+        i += 1
 
-    print("RANDOM SOLUTION FOUND")
+    print(f"RANDOM SOLUTION FOUND in {i} iterations")
+    print_usage(district)
 
 def randomize_houses(houses):
     """
