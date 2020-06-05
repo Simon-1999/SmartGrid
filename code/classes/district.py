@@ -117,7 +117,7 @@ class District():
 
         costs = {
             "cables": cables_cost,
-            "batt_cost": batt_cost,
+            "batteries": batt_cost,
             "total": cables_cost + batt_cost
         }
 

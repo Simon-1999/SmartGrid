@@ -24,3 +24,5 @@ if __name__ == "__main__":
 
 
     print(f"Total cost of the district:{total}")
+    print(f"Total cost of the cables:{cables}")
+    print(f"Total cost of the batteries:{batteries}")
