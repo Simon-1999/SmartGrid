@@ -1,4 +1,6 @@
 
+from operator import attrgetter
+
 def manhattan_solution(district):
     """
     Finds a solution by connecting houses to the neirest battery with free capacity
@@ -7,9 +9,13 @@ def manhattan_solution(district):
     # make sure district is reset
     district.reset_cables()
 
-    # query values
-    connectpoints = district.get_connectpoints()
+    # vertical order batteries and houses and connectpoints
+    batteries = district.get_batteries()
+    order_vertical(batteries)
     houses = district.get_houses()
+    order_vertical(houses)
+    connectpoints = district.get_connectpoints()
+    order_vertical(connectpoints)
 
     # make the connections
     if not add_cables(district, connectpoints, houses):
@@ -20,9 +26,6 @@ def manhattan_solution(district):
 
     return {"success": success}
 
-
-
-
 def add_cables(district, connectpoints, houses):
     """
     Adds cable connections between the batteries and the houses
@@ -30,6 +33,7 @@ def add_cables(district, connectpoints, houses):
     i = 0
     # loop through the houses
     for house in houses:
+
         i += 1
         print(f"{i}")
 
@@ -45,9 +49,7 @@ def add_cables(district, connectpoints, houses):
         # connect the house and that battery
         district.add_cable(connectpoint, house)
     
-    return True
-
-    
+    return True 
 
 def available_connectpoints(connectpoints, house):
     """
@@ -74,7 +76,6 @@ def nearest_connectpoint(connectpoints, house):
 
     # get the locations
     house_location = house.get_location()
-
     connect_location = connectpoints[0].get_location()
 
     # define the first battery in the list as the minimum distance
@@ -88,7 +89,7 @@ def nearest_connectpoint(connectpoints, house):
 
         dist = calc_manhattan_dist(house_location, connect_location)
 
-        if dist < min_dist:
+        if dist < min_dist: 
             nearest_connectpoint = connectpoint
             min_dist = dist
     
@@ -108,3 +109,17 @@ def calc_manhattan_dist(start, goal):
     dist = abs(x - x_goal) + abs(y - y_goal)
 
     return dist
+
+def order_vertical(objects_list):
+    """
+    Order batteries on vertical position
+    """
+
+    objects_list.sort(key=vertical_location, reverse=True)
+
+def vertical_location(obj):
+    """
+    Returns vertical position of object
+    """
+
+    return obj.get_location()[1]
