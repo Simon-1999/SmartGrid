@@ -18,7 +18,7 @@ def manhattan_solution(district):
     order_vertical(connectpoints)
 
     # make the connections
-    if not add_cables(district, connectpoints, houses):
+    if not add_cables(district, connectpoints, batteries, houses):
         return {"success": False}
 
     # check if any of the batteries is overloaded
@@ -26,10 +26,11 @@ def manhattan_solution(district):
 
     return {"success": success}
 
-def add_cables(district, connectpoints, houses):
+def add_cables(district, connectpoints, batteries, houses):
     """
     Adds cable connections between the batteries and the houses
     """
+
     i = 0
     # loop through the houses
     for house in houses:
@@ -38,7 +39,7 @@ def add_cables(district, connectpoints, houses):
         print(f"{i}")
 
         # update the free connectpoints list
-        free_connectpoints = available_connectpoints(connectpoints, house)
+        free_connectpoints = available_connectpoints(connectpoints, batteries, house)
 
         if not free_connectpoints:
             return False
@@ -51,10 +52,13 @@ def add_cables(district, connectpoints, houses):
     
     return True 
 
-def available_connectpoints(connectpoints, house):
+def available_connectpoints(connectpoints, batteries, house):
     """
     Returns a list of connectpoints that still have capacity left to add a cable
     """
+
+    # get nearest free battery
+    nearest_free_battery = get_nearest_free_battery(batteries, house)
 
     free_connectpoints = []
 
@@ -62,8 +66,8 @@ def available_connectpoints(connectpoints, house):
 
         battery = connectpoint.get_battery()
 
-        # check if battery capacity is exceeded after adding the house
-        if not battery.calc_overload(house):
+        # check if connectpoint belongs to nearest free battery
+        if connectpoint.get_battery() == nearest_free_battery:
             free_connectpoints.append(connectpoint)
 
     return free_connectpoints
@@ -95,6 +99,25 @@ def nearest_connectpoint(connectpoints, house):
     
     return nearest_connectpoint
 
+def get_nearest_free_battery(batteries, house):
+
+    house_location = house.get_location()
+    min_dist = 100
+    nearest_free_battery = None
+
+    for battery in batteries:
+
+        battery_location = battery.get_location()
+        dist = calc_manhattan_dist(house_location, battery_location)
+
+        if dist < min_dist and not battery.calc_overload(house):
+            min_dist = dist
+            nearest_free_battery = battery
+
+    if nearest_free_battery is None:
+        print("error: no free battery found")
+
+    return nearest_free_battery
 
 def calc_manhattan_dist(start, goal):
     """
