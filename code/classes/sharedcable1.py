@@ -1,3 +1,5 @@
+import random
+
 class Cable():
     def __init__(self, connectpoint, house):
         self.house = house
@@ -6,38 +8,50 @@ class Cable():
         self.path = self.cable_path(house, connectpoint)
 
     def cable_path(self, house, connectpoint):
-        # unpack the locations into variables
-        house_x, house_y = house.get_location()
-        point_x, point_y = connectpoint.get_location()
 
         # set current location and goal location
-        current_x = house_x
-        current_y = house_y
-        goal_x = point_x
-        goal_y = point_y
+        current_x, current_y = house.get_location()
+        goal_x, goal_y = connectpoint.get_location()
 
-        # create path
-        path = [(current_x, current_y)]
+        # initialize path
+        path = [(current_x, current_y)] 
 
-        # loop through path horizontally and vertically respectively
-        while current_x < goal_x:
-            current_x += 1
+        # get movement direction
+        hor_dist = goal_x - current_x
+        if abs(hor_dist) > 0:
+            hor_move = int(hor_dist / abs(hor_dist))
+        ver_dist = goal_y - current_y    
+        if abs(ver_dist) > 0:
+            ver_move = int(ver_dist / abs(ver_dist))
+
+        # initialize movements list
+        movements = []
+
+        # add horizontal movements 
+        for x in range(abs(hor_dist)):
+            movements.append((hor_move, 0))
+        
+        # add vertical movements to list
+        for y in range(abs(ver_dist)):
+            movements.append((0, ver_move))
+
+        # shuffle list of movements
+        random.shuffle(movements)
+
+        # make path
+        for movement in movements:
+
+            # extract movement
+            move_x, move_y = movement
+
+            # increment current position
+            current_x += move_x
+            current_y += move_y
+
+            # add position to path
             path.append((current_x, current_y))
 
-        while current_x > goal_x:
-            current_x -= 1
-            path.append((current_x, current_y))
-
-        while current_y < goal_y:
-            current_y += 1
-            path.append((current_x, current_y))
- 
-        while current_y > goal_y:
-            current_y -= 1
-            path.append((current_x, current_y))
-
-        return path    
-
+        return path 
 
     def calc_length(self):
         """ Returns length of cable """  
