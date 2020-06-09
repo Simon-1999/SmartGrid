@@ -17,9 +17,17 @@ class Battery():
         # add house to battery
         self.houses.append(house)
 
+    def add_cable(self, cable):
+        """
+        Adds a cable object
+        """
+
+        self.cables.append(cable)
+
     def get_location(self):
         # get location of battery
         return self.location
+        
 
     def update_usage(self, house):
         """
@@ -49,9 +57,18 @@ class Battery():
         """
         return self.cost
 
-    def add_cable(self, cable_path):
-        # CONCEPT
-        self.cables.append(cable_path)
+    def calc_overload(self, house):
+        """
+        Calculates if a battery gets overloaded by adding an house object.
+        """
+        # get output of the house
+        output = house.get_output()
+
+        # check if the battery capacity is exceeded by adding a house
+        if (output + self.usage) > self.capacity:
+            return True
+
+        return False
 
     def __repr__(self):
         return f"Id: {self.id} Location: {self.location}"

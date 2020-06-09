@@ -16,6 +16,19 @@ class House():
         """
 
         return self.output
+
+    def add_cable(self, cable):
+        """
+        Adds a cable object
+        """
+        self.cable = cable
+
+    def has_cable(self):
+        """
+        Checks if house has a cable
+        """
+        
+        return self.cable is not None
         
     def __repr__(self):
         return f"Id: {self.id} Location: {self.location}"

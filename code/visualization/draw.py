@@ -43,7 +43,7 @@ def plot(district):
             y_path.append(y)
       
         # add cable path to plot
-        plt.plot(x_path, y_path, "-", color=color[cable.battery.id])
+        plt.plot(x_path, y_path, "-", color=color[cable.battery.id], alpha = 0.3)
 
     # plot district    
     plt.plot(x_houses, y_houses, 'kp', label = 'house', markersize=7)
@@ -52,3 +52,4 @@ def plot(district):
     ax.grid(which='minor', alpha=0.2)
     plt.legend()
     plt.show()
+    

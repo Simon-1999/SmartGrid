@@ -53,7 +53,9 @@ class District():
         Adds a cable object
         """
         cable = Cable(battery, house)
-        house.cable = cable
+        
+        battery.add_cable(cable)
+        house.add_cable(cable)
 
         self.cables.append(cable)
 
@@ -99,6 +101,13 @@ class District():
         for battery in self.batteries:
             battery.reset_usage()
 
+    def get_cables(self):
+        """
+        Returns the list of cables in the district
+        """
+
+        return self.cables
+
 
     def calc_costs(self):
         """
@@ -124,11 +133,16 @@ class District():
 
         return costs
 
-        
+    def check_houses(self):
+        """
+        Checks if all the houses have a cable
+        """
 
-    def draw_district(self):
-        pass
+        for house in self.houses:
 
+            if not house.has_cable():
+                return False
 
+        return True
 
 
