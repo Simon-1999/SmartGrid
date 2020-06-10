@@ -1,115 +1,80 @@
-class SharedCable():
-    def __init__(self, battery):
-        self.houses = [] # list must be order from closest to farest house
+import random
+
+class Cable():
+    def __init__(self, connectpoint, battery, house):
+        self.house = house
+        self.connectpoint = connectpoint
         self.battery = battery
-        self.fixedpoints = []
-        self.path = []
+        self.path = self.cable_path(house, connectpoint)
 
-    def calc_cable_path(self):
-        """ 
-        Calculate path of cable 
-        """
-
-        # reset path and fixedpoints
-        self.path = []
-        self.fixedpoints = [self.battery.get_location()]
-
-        # add branch for every house
-        for house in self.houses:
-
-            current_location = house.get_location()
-            goal_location = self.nearest_fixedpoint(current_location)
-            self.add_branch(current_location, goal_location)      
-
-    def add_branch(self, current_location, goal_location):
-        """ 
-        Calculate path from current to goal location 
-        """
+    def cable_path(self, house, connectpoint):
 
         # set current location and goal location
-        current_x, current_y = current_location
-        goal_x, goal_y = self.nearest_fixedpoint(current_location)
+        current_x, current_y = house.get_location()
+        goal_x, goal_y = connectpoint.get_location()
 
-        # loop through path horizontally and vertically respectively
-        while current_x < goal_x:
-            current_x += 1
-            if (current_x, current_y) not in self.path:
-                self.path.append((current_x, current_y)) 
+        # initialize path
+        path = [(current_x, current_y)] 
 
-        while current_x > goal_x:
-            current_x -= 1
-            if (current_x, current_y) not in self.path:
-                self.path.append((current_x, current_y)) 
+        # get movement direction
+        hor_dist = goal_x - current_x
+        if abs(hor_dist) > 0:
+            hor_move = int(hor_dist / abs(hor_dist))
+        ver_dist = goal_y - current_y    
+        if abs(ver_dist) > 0:
+            ver_move = int(ver_dist / abs(ver_dist))
 
-        while current_y < goal_y:
-            current_y += 1
-            if (current_x, current_y) not in self.path:
-                self.path.append((current_x, current_y)) 
- 
-        while current_y > goal_y:
-            current_y -= 1
-            if (current_x, current_y) not in self.path:
-                self.path.append((current_x, current_y)) 
+        # initialize movements list
+        movements = []
 
-        self.fixedpoints.append(current_location)
+        # add horizontal movements 
+        for x in range(abs(hor_dist)):
+            movements.append((hor_move, 0))
+        
+        # add vertical movements to list
+        for y in range(abs(ver_dist)):
+            movements.append((0, ver_move))
 
-    def nearest_fixedpoint(self, current_location):
-        """ 
-        Find nearest fixedpoint 
-        """
+        # shuffle list of movements
+        random.shuffle(movements)
 
-        current_x, current_y = current_location
-        min_dist = 100
+        # make path
+        for movement in movements:
 
-        # loop through all fixed points
-        for fixedpoint in self.fixedpoints:
+            # extract movement
+            move_x, move_y = movement
 
-            fixedpoint_x, fixedpoint_y = fixedpoint
-            dist = abs(current_x - fixedpoint_x) + abs(current_y - fixedpoint_y)
-            
-            # overwrite minimum distance and save that fixedpoint
-            if dist < min_dist:
+            # increment current position
+            current_x += move_x
+            current_y += move_y
 
-                min_dist = dist
-                nearest_fixedpoint = fixedpoint
+            # add position to path
+            path.append((current_x, current_y))
 
-        return nearest_fixedpoint
+        return path 
 
     def calc_length(self):
-        """ 
-        Returns length of cable 
-        """ 
-
+        """ Returns length of cable """  
         return len(self.path) - 1
 
     def get_cost(self):
         """
         Returns the cost of the pathway
         """
+        length = self.calc_length()
+        total = 9 * length
 
-        return self.calc_length() * 9
+        return total
 
-    def add_house(self, house):
+    def get_path(self):
         """
-        Adds house to cable and calculates new cable path
+        Returns cable path
         """
-
-        self.houses.append(house)
-
-        def dist_battery(house):
-            """
-            Returns distance from battery
-            """
-
-            house_x, house_y = house.get_location()
-            battery_x, battery_y = self.battery.get_location()
-
-            return abs(house_x - battery_x) + abs(house_y - battery_y)
-
-        # make sure list of houses is order from closest to farest to battery
-        self.houses.sort(key=dist_battery)
-
-        # recalculate path
-        self.calc_cable_path()
-
+        return self.path
     
+    def get_battery(self):
+        """
+        Returns the source battery
+        """
+
+        return self.battery

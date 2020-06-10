@@ -1,6 +1,11 @@
 import random 
 import numpy as np 
 
+"""
+Explanation of file:
+Status: 
+"""
+
 def random_solution(district):
     """ 
     Finding random solution 

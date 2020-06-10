@@ -17,6 +17,16 @@ class House():
 
         return self.output
 
+    def get_battery(self):
+        """
+        Returns the battery if the house is connected to one
+        """
+
+        if self.cable:
+            return self.cable.battery
+        
+        return None
+
     def add_cable(self, cable):
         """
         Adds a cable object

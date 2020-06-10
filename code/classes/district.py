@@ -4,6 +4,7 @@ from .battery import Battery
 from .house import House
 from .cable import Cable
 
+BATTERY_COST = 5000
 
 class District():
     def __init__(self, uid, batteries_file, houses_file):
@@ -27,7 +28,7 @@ class District():
                 location = tuple(map(int, row["positie"].split(",")))
 
                 capacity = float(row["capaciteit"])
-                batteries.append(Battery(i, location, capacity))
+                batteries.append(Battery(i, location, capacity, BATTERY_COST))
 
         return batteries
 
@@ -54,13 +55,29 @@ class District():
         """
         cable = Cable(battery, house)
         
+        battery.add_house(house)
         battery.add_cable(cable)
+
         house.add_cable(cable)
 
         self.cables.append(cable)
 
-        # update the usage of the battery
-        battery.update_usage(house)
+
+    def remove_cable(self, cable):
+        """
+        Removes the cable from the list of cables and the corresponding battey and hous objects
+        """
+        # adjust if class attributes become private
+        battery = cable.battery
+        house = cable.house
+
+        # adjust if class attributes become private
+        battery.cable = None
+        house.cable = None
+
+        self.cables.remove(cable)
+
+        del cable
 
     
     def get_batteries(self):
@@ -96,6 +113,9 @@ class District():
         Resets the connections between the batteries and houses
         """
 
+        #for cable in self.cables:
+            #del cable
+        
         self.cables = []
 
         for battery in self.batteries:
@@ -133,7 +153,7 @@ class District():
 
         return costs
 
-    def check_houses(self):
+    def all_houses_connected(self):
         """
         Checks if all the houses have a cable
         """

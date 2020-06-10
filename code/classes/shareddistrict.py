@@ -1,17 +1,21 @@
 import csv
+import random
 
-from .sharedbattery import Battery
+from .battery import Battery
 from .house import House
-from .sharedcable import SharedCable
+from .sharedcable import Cable
+from .connectpoint import Connectpoint
 
+BATTERY_COST = 5000
 
 class District():
     def __init__(self, uid, batteries_file, houses_file):
         self.id = uid
-        self.cables = []
         self.batteries = self.load_batteries(batteries_file)
         self.houses = self.load_houses(houses_file)
-        
+        self.connectpoints = self.init_connectpoints()
+        self.cables = []
+
     def load_batteries(self, file_path):
         """
         Loads all the batteries into the district
@@ -26,14 +30,8 @@ class District():
                 # convert the location coordinates in a tuple of integers
                 location = tuple(map(int, row["positie"].split(",")))
 
-                # make cable and battery object
                 capacity = float(row["capaciteit"])
-                battery = Battery(i, location, capacity)
-                sharedcable = SharedCable(battery)
-                battery.add_cable(sharedcable)
-
-                # add cables and batteries to district
-                self.cables.append(sharedcable)
+                battery = Battery(i, location, capacity, BATTERY_COST)
                 batteries.append(battery)
 
         return batteries
@@ -54,15 +52,47 @@ class District():
 
         return houses
 
+    def init_connectpoints(self):
+        """
+        Loads the first connectpoints of the district
+        """
+        connectpoints = []
+
+        for battery in self.batteries:
+            connectpoint = Connectpoint(battery.location, battery)
+            connectpoints.append(connectpoint)
+
+        return connectpoints
+
+
+    def reset_connectpoints(self):
+        """
+        Resets the connectpoints to starting position
+        """
+        self.connectpoints = self.init_connectpoints()
+
     
-    def add_branch(self, battery, house):
+    def add_cable(self, connectpoint, house):
         """
         Adds a cable object
         """
+        battery = connectpoint.battery
+        cable = Cable(connectpoint, battery, house)
 
-        battery.get_cable().add_house(house)
+        # update the connectpoints
+        self.update_connectpoints(connectpoint, cable)
+
         battery.add_house(house)
+        battery.add_cable(cable)
 
+        house.add_cable(cable)
+
+        self.cables.append(cable)
+
+        # update the usage of the battery
+        #connectpoint.update_usage(house)
+
+    
     def get_batteries(self):
         """
         Returns a list of battery objects in the district
@@ -78,6 +108,11 @@ class District():
 
         return self.houses
 
+    def get_connectpoints(self):
+        """
+        Returns a list of connectpoints
+        """
+        return self.connectpoints
 
     def is_overload(self):
         """
@@ -101,6 +136,13 @@ class District():
         for battery in self.batteries:
             battery.reset_usage()
 
+    def get_cables(self):
+        """
+        Returns the list of cables in the district
+        """
+
+        return self.cables
+
 
     def calc_costs(self):
         """
@@ -110,14 +152,13 @@ class District():
         cables_cost = 0
         batt_cost = 0
 
-        # # add the costs of the cables
-        # for cable in self.cables:
-        #     cables_cost += cable.get_cost()
+        # add the costs of the cables
+        for cable in self.cables:
+            cables_cost += cable.get_cost()
 
         # add the costs of the batteries
         for battery in self.batteries:
             batt_cost += battery.get_cost()
-            cables_cost += battery.get_cable().get_cost()
 
         costs = {
             "cables": cables_cost,
@@ -127,11 +168,37 @@ class District():
 
         return costs
 
+
+    def all_houses_connected(self):
+        """
+        Checks if all the houses have a cable
+        """
         
+        for house in self.houses:
+            
+            if not house.has_cable():
+                return False
 
-    def draw_district(self):
-        pass
+        return True
 
 
+    def update_connectpoints(self, connectpoint, cable):
+        """
+        Updates the connectpoints according to the cable path
+        """
 
+        #goal = connectpoint.get_location()
+        battery = connectpoint.get_battery()
+
+        path = cable.get_path()
+
+        # remove the goal coordinates from the path
+        path = path[:-1]
+
+        # add every path coordinate to the connectpoints
+        for location in path:
+
+            new_point = Connectpoint(location, battery)
+            self.connectpoints.append(new_point)
+    
 
