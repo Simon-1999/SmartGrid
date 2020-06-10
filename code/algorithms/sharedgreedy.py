@@ -1,4 +1,5 @@
 
+import random
 from operator import attrgetter
 
 """
@@ -12,6 +13,7 @@ def greedy_solution(district):
     """
     complete = False
     iter = 0
+
     while not complete:
         # make sure district is reset
         district.reset_cables()
@@ -19,14 +21,12 @@ def greedy_solution(district):
         # reset the connectpoints
         district.reset_connectpoints()
 
-        # shuffle the district houses
-        district.shuffle_houses()
-
         # vertical order batteries and houses and connectpoints
         batteries = district.get_batteries()
         order_vertical(batteries)
 
         houses = district.get_houses()
+        random.shuffle(houses)
         order_vertical(houses)
     
         connectpoints = district.get_connectpoints()
@@ -76,8 +76,6 @@ def available_connectpoints(connectpoints, batteries, house):
     free_connectpoints = []
 
     for connectpoint in connectpoints:
-
-        battery = connectpoint.get_battery()
 
         # check if connectpoint belongs to nearest free battery
         if connectpoint.get_battery() == nearest_free_battery:
