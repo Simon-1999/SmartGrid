@@ -1,5 +1,10 @@
 
-def manhattan_solution(district):
+"""
+Explanation of file:
+Status: 
+"""
+
+def random_opt(district):
     """
     Finds a solution by connecting houses to the neirest battery with free capacity
     """

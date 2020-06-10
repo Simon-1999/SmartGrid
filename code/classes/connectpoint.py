@@ -18,9 +18,5 @@ class Connectpoint():
 
         return self.battery
 
-    def update_usage(self, house):
-        """
-        Updates the usage of the source battery of the connectpoint
-        """
-
-        self.battery.update_usage(house)
+    def __repr__(self):
+        return f"Connectpoint location: {self.location} battery: {self.battery}"

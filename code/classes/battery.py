@@ -1,12 +1,10 @@
-BATTERY_COST = 5000
-
 class Battery():
-    def __init__(self, uid, location, capacity):
+    def __init__(self, uid, location, capacity, cost):
         # attributes of battery based on data
         self.id = uid
         self.location = location
         self.capacity = capacity
-        self.cost = BATTERY_COST
+        self.cost = cost
 
         # attributes to create the grid network
         self.usage = 0
@@ -14,8 +12,12 @@ class Battery():
         self.cables = []
 
     def add_house(self, house):
-        # add house to battery
+        """ 
+        Add house to battery and updates usage
+        """ 
+
         self.houses.append(house)
+        self.update_usage(house)
 
     def add_cable(self, cable):
         """
@@ -25,7 +27,10 @@ class Battery():
         self.cables.append(cable)
 
     def get_location(self):
-        # get location of battery
+        """
+        Get location of battery
+        """
+
         return self.location
         
 
@@ -51,11 +56,6 @@ class Battery():
         """
         return self.capacity < self.usage
 
-    def get_cost(self):
-        """
-        Returns the cost of the battery
-        """
-        return self.cost
 
     def calc_overload(self, house):
         """
@@ -70,8 +70,16 @@ class Battery():
 
         return False
 
+
+    def get_cost(self):
+        """
+        Returns the cost of the battery
+        """
+        return self.cost
+
+
     def __repr__(self):
-        return f"Id: {self.id} Location: {self.location}"
+        return f"Id: {self.id} Location: {self.location} Usage: {self.usage}"
         
 
     
