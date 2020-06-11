@@ -1,18 +1,28 @@
-import random 
-import numpy as np 
-
 """
 Explanation of file:
+Random shuffling houses untill solution is found
 Status: 
 """
 
-def random_solution(district):
+# imports
+import random 
+import copy
+
+def run(district):
     """ 
-    Finding random solution 
+    Shuffling houses and finding random solution
     """
 
+    print(f"====== randomize running ======")
+
+    # copy district
+    district = copy.deepcopy(district)
+
+    # query values
     batteries = district.get_batteries()
     houses = district.get_houses()
+
+    # initialize algorithm iterations
     i = 0
     
     # making configurations until no battery is overloaded
@@ -22,44 +32,61 @@ def random_solution(district):
         district.reset_cables()
 
         # randomize houses list
-        randomize_houses(houses)
+        order_randomize(houses)
 
         # add cable connections
         add_cables(district, batteries, houses)
 
+        # check if configuration is valid
         if not district.is_overload():
             break
         
+        # increment iterations
         i += 1
 
-    print(f"RANDOM SOLUTION FOUND in {i} iterations")
-    print_usage(district)
+    print_result(district, i)
+    print(f"======== randomize done ========")
 
-def randomize_houses(houses):
+    return district
+
+def order_randomize(list_objects):
     """
-    Randomize houses list
+    Random shuffles input list
     """
 
-    return random.shuffle(houses)    
+    return random.shuffle(list_objects)    
 
 def add_cables(district, batteries, houses):
     """
     Assign houses to batteries
     """
 
+    # loop through all houses
     for house in houses:
-        usages = []
-        for battery in batteries:
-            usages.append(battery.usage)
-        
-        least_used_batt = batteries[np.argmin(usages)]
 
-        # add cable between the house and the chosen battery
+        # get least used battery
+        least_used_batt = calc_least_used_batt(batteries)
+
+        # add cable between house and battery
         district.add_cable(least_used_batt, house)
 
-            
-def print_usage(district):
-    batteries = district.get_batteries()
+def calc_least_used_batt(batteries):
+    """
+    Calculate least used battery
+    """
 
-    for battery in batteries:
-        print(battery.usage)
+    return min(batteries, key=lambda battery: battery.usage)
+
+def print_result(district, iterations):
+
+    print("+------------------------------+")
+    if district.is_overload():
+        print(f"| {'configuration:':<15} {'invalid':>12} |")
+    else:
+        print(f"| {'configuration:':<15} {'valid':>12} |")
+    print(f"| {'iterations:':<15} {iterations:>12} |")
+    costs = district.calc_costs()
+    print(f"| {'cables:':<15} {costs['cables']:>12} |")
+    print(f"| {'batteries:':<15} {costs['batteries']:>12} |")
+    print(f"| {'total:':<15} {costs['total']:>12} |")
+    print("+------------------------------+")   
