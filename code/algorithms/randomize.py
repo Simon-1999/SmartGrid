@@ -4,89 +4,68 @@ Random shuffling houses untill solution is found
 Status: 
 """
 
-# imports
 import random 
 import copy
 
-def run(district):
-    """ 
-    Shuffling houses and finding random solution
+from .algorithm import Algorithm
+
+class Randomize(Algorithm):
+    """
+    Random shuffling houses untill solution is found
     """
 
-    print(f"====== randomize running ======")
+    def run(self):
 
-    # copy district
-    district = copy.deepcopy(district)
+        print("randomize running... ")
 
-    # query values
-    batteries = district.get_batteries()
-    houses = district.get_houses()
+        while True:
 
-    # initialize algorithm iterations
-    i = 0
-    
-    # making configurations until no battery is overloaded
-    while True:
+            self.iterations += 1
 
-        # remove cable connections
-        district.reset_cables()
+            # remove cables
+            self.district.reset_cables()
 
-        # randomize houses list
-        order_randomize(houses)
+            # randomize houses list
+            self.order_random(self.district.get_houses())
 
-        # add cable connections
-        add_cables(district, batteries, houses)
+            # add cable connections
+            self.assign_cables()
 
-        # check if configuration is valid
-        if not district.is_overload():
-            break
-        
-        # increment iterations
-        i += 1
+            # check if configuration is valid
+            if not self.district.is_overload():
+                break
 
-    print_result(district, i)
-    print(f"======== randomize done ========")
+        self.print_result(self.district)
 
-    return district
+        print("randomize done")
 
-def order_randomize(list_objects):
-    """
-    Random shuffles input list
-    """
+        return self.district
 
-    return random.shuffle(list_objects)    
+    def order_random(self, list_objects):
+        """
+        Random order house
+        """
 
-def add_cables(district, batteries, houses):
-    """
-    Assign houses to batteries
-    """
+        return random.shuffle(list_objects)
 
-    # loop through all houses
-    for house in houses:
+    def assign_cables(self):
+        """
+        Assign houses to batteries
+        """
 
-        # get least used battery
-        least_used_batt = calc_least_used_batt(batteries)
+        # loop through all houses
+        for house in self.district.get_houses():
 
-        # add cable between house and battery
-        district.add_cable(least_used_batt, house)
+            # get least used battery
+            battery = self.calc_least_used_batt()
 
-def calc_least_used_batt(batteries):
-    """
-    Calculate least used battery
-    """
+            # add cable 
+            self.district.add_cable(battery, house)
 
-    return min(batteries, key=lambda battery: battery.usage)
+    def calc_least_used_batt(self):
+        """
+        Calculate least used battery
+        """
 
-def print_result(district, iterations):
-
-    print("+------------------------------+")
-    if district.is_overload():
-        print(f"| {'configuration:':<15} {'invalid':>12} |")
-    else:
-        print(f"| {'configuration:':<15} {'valid':>12} |")
-    print(f"| {'iterations:':<15} {iterations:>12} |")
-    costs = district.calc_costs()
-    print(f"| {'cables:':<15} {costs['cables']:>12} |")
-    print(f"| {'batteries:':<15} {costs['batteries']:>12} |")
-    print(f"| {'total:':<15} {costs['total']:>12} |")
-    print("+------------------------------+")   
+        return min(self.district.get_batteries(), key=lambda \
+            battery: battery.usage)
