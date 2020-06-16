@@ -18,10 +18,11 @@ class ConfigFinder(Algorithm):
         
         print("ConfigFinder running...")
 
-        CAPACITY_OFFSET = 200
-        ITERATIONS = 100000
+        CAPACITY_OFFSET = 350
+        ITERATIONS = 10000
         min_costs = float('inf') 
-        best_connections = copy.copy(self.district.connections)   
+        min_longest_connection_dist = float('inf') 
+        best_connections = copy.copy(self.district.connections)  
 
         # set current_connections
         connections = {}
@@ -46,19 +47,21 @@ class ConfigFinder(Algorithm):
             # check if solution is valid
             if self.district.all_houses_connected():
 
-                # calculate costs
-                costs = self.district.calc_connection_costs()['total']
+                # calculate longest cable
+                longest_connection_dist = self.get_longest_connection(self.district.connections)
 
                 # check if costs are better
-                if costs < min_costs:
+                if longest_connection_dist < min_longest_connection_dist:
+                    
                     # save new minimum value
-                    min_costs = costs
+                    min_longest_connection_dist = longest_connection_dist
 
                     # save connections in best connections
                     best_connections = {}
                     for key, value in self.district.connections.items():
                         best_connections[key] = copy.copy(value)    
 
+            # reset district connections
             for key, value in connections.items():
                 self.district.connections[key] = copy.copy(value)
 
@@ -110,7 +113,25 @@ class ConfigFinder(Algorithm):
 
             if battery != None:
                 self.district.add_connection(battery, house)
-                 
+
+    def get_longest_connection(self, connections):
+
+        max_dist = 0
+
+        # loop through clusters
+        for cluster in self.clusters:
+
+            # loop through houses in cluster
+            for house in connections[cluster['battery'].id]:
+
+                dist = self.calc_dist(house.location, cluster['centroid'])
+
+                # save maximum distance
+                if dist > max_dist:
+                    max_dist = dist
+
+        return max_dist
+                
     def plot_connections(self, district, free_houses):
 
         fig = plt.figure()
