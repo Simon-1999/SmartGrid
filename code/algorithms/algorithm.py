@@ -4,7 +4,7 @@ class Algorithm():
 
     def __init__(self, district):
 
-        self.district = copy.deepcopy(district) 
+        self.district = district
         self.iterations = 0
 
     def print_result(self, district):
@@ -13,13 +13,9 @@ class Algorithm():
             print(f"| {'configuration:':<18} {'valid':>12} |")
         else:
             print(f"| {'configuration:':<18} {'invalid':>12} |")
-            for house in district.get_houses():
-                if not house.has_cable():
-                    x, y = house.get_location()
-                    print(f"| house at [{x}, {y}] {'not connected':>12} |")
         print(f"| {'iterations:':<18} {self.iterations:>12} |")
-        costs = district.calc_costs()
-        print(f"| {'cables:':<18} {costs['cables']:>12} |")
+        costs = district.calc_connection_costs()
+        print(f"| {'connections:':<18} {costs['connections']:>12} |")
         print(f"| {'batteries:':<18} {costs['batteries']:>12} |")
         print(f"| {'total:':<18} {costs['total']:>12} |")
         print("+---------------------------------+")  
