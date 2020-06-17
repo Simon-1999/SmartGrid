@@ -18,17 +18,20 @@ class ConfigFinder(Algorithm):
         
         print("ConfigFinder running...")
 
-        CAPACITY_OFFSET = 200
-        ITERATIONS = 100000
-        min_costs = float('inf') 
+        CAPACITY_OFFSET = 350
+        ITERATIONS = 50000
+        min_costs = float('inf')
+        longest_dist_length = float('inf')
         best_connections = copy.copy(self.district.connections)   
+
+        found_costs = []
 
         # set current_connections
         connections = {}
         for key, value in self.district.connections.items():
             connections[key] = copy.copy(value)
 
-        # make random configurations
+
         for i in range(ITERATIONS):
 
             # increment iterations
@@ -46,13 +49,19 @@ class ConfigFinder(Algorithm):
             # check if solution is valid
             if self.district.all_houses_connected():
 
-                # calculate costs
-                costs = self.district.calc_connection_costs()['total']
+# ================= CODE FOR COST HEURISTIC ================
+                # # calculate costs
+                # costs = self.district.calc_connection_costs()['total']
 
-                # check if costs are better
-                if costs < min_costs:
-                    # save new minimum value
-                    min_costs = costs
+                # # check if costs are better
+                # if costs < min_costs:
+                #     # save new minimum value
+                #     min_costs = costs
+
+# ================ CODE FOR LONGEST CABLE HEURISTIC =============
+                # calculate longest connection
+                length_sorted = []
+                
 
                     # save connections in best connections
                     best_connections = {}
@@ -61,6 +70,13 @@ class ConfigFinder(Algorithm):
 
             for key, value in connections.items():
                 self.district.connections[key] = copy.copy(value)
+            
+            # calculate costs of the found configuration
+            found_costs.append(min_costs)
+            
+            # update capacity for next run
+            #print(f"decreasing capacity offset, current found cost: {min_costs}")
+            #print(f"moving to iteration {i}")
 
         # set best connections
         self.district.connections = best_connections
@@ -69,7 +85,11 @@ class ConfigFinder(Algorithm):
         self.plot_connections(self.district, self.free_houses)
         self.print_result(self.district)
 
-        print("ConfigFinder done ")
+        # plot iterations vs. costs to visualize the decrease speed
+        self.plot_iterations_cost_decrease(ITERATIONS, found_costs)
+
+        # plot capacity offset vs. final costs
+        #self.plot_offset_foundcosts(offsets, found_costs)
 
         return self.district        
 
@@ -85,6 +105,15 @@ class ConfigFinder(Algorithm):
                 return cluster['battery']
 
         return None
+
+    def free_battery(self, house):
+        """
+        Equivalent to nearest_free_battery but without sorting based on distance
+        """
+        for cluster in self.clusters:
+            if not self.district.calc_overload(cluster['battery'], house):
+                return cluster['battery']
+
 
     def remove_connections(self, CAPACITY_OFFSET):
 
@@ -110,7 +139,23 @@ class ConfigFinder(Algorithm):
 
             if battery != None:
                 self.district.add_connection(battery, house)
+
+
+    def add_random_connections(self):
+        """
+        Equivalent to add_connections(self), but chooses random battery with free capacity
+        instead of using the nearness-heuristic
+        """
+        random.shuffle(self.free_houses)
+
+        for house in self.free_houses:
+            # find random battery that has capacity
+            battery = self.free_battery(house)
+
+            if battery != None:
+                self.district.add_connection(battery, house)
                  
+
     def plot_connections(self, district, free_houses):
 
         fig = plt.figure()
@@ -137,4 +182,26 @@ class ConfigFinder(Algorithm):
         ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
         ax.grid(which='minor', alpha=0.2)
         plt.legend()
+        plt.show()
+
+
+
+    def plot_offset_foundcosts(self, offsets, found_costs):
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        plt.title(f"Costs of district after changing capacity offsets")
+
+        ax.plot(offsets, found_costs)
+        plt.show()
+
+    def plot_iterations_cost_decrease(self, iters, found_costs):
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        plt.title(f"Costs of district after every iteration of ConfigFinder")
+
+        ax.plot(list(range(iters)), found_costs)
+
+        axes = plt.gca()
+        axes.set_ylim([57000,61000])
+
         plt.show()
