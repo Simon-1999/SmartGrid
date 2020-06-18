@@ -20,11 +20,11 @@ class ConfigFinder(Algorithm):
 
         CAPACITY_OFFSET = 350
         ITERATIONS = 50000
-        min_costs = float('inf')
-        longest_dist_length = float('inf')
+        # min_costs = float('inf')
+        min_longest_connection_dist = float('inf')
         best_connections = copy.copy(self.district.connections)   
 
-        found_costs = []
+        found_lengths = []
 
         # set current_connections
         connections = {}
@@ -44,7 +44,7 @@ class ConfigFinder(Algorithm):
             self.remove_connections(CAPACITY_OFFSET)
 
             # add connections
-            self.add_connections()
+            self.add_random_connections()
 
             # check if solution is valid
             if self.district.all_houses_connected():
@@ -59,20 +59,26 @@ class ConfigFinder(Algorithm):
                 #     min_costs = costs
 
 # ================ CODE FOR LONGEST CABLE HEURISTIC =============
-                # calculate longest connection
-                length_sorted = []
-                
+                # calculate longest cable
+                longest_connection_dist = self.get_longest_connection(self.district.connections)
+
+                # check if costs are better
+                if longest_connection_dist < min_longest_connection_dist:
+                    
+                    # save new minimum value
+                    min_longest_connection_dist = longest_connection_dist
 
                     # save connections in best connections
                     best_connections = {}
                     for key, value in self.district.connections.items():
                         best_connections[key] = copy.copy(value)    
 
+            # reset district connections
             for key, value in connections.items():
                 self.district.connections[key] = copy.copy(value)
             
             # calculate costs of the found configuration
-            found_costs.append(min_costs)
+            found_lengths.append(min_longest_connection_dist)
             
             # update capacity for next run
             #print(f"decreasing capacity offset, current found cost: {min_costs}")
@@ -82,11 +88,11 @@ class ConfigFinder(Algorithm):
         self.district.connections = best_connections
 
         # results
-        self.plot_connections(self.district, self.free_houses)
+        #self.plot_connections(self.district, self.free_houses)
         self.print_result(self.district)
 
         # plot iterations vs. costs to visualize the decrease speed
-        self.plot_iterations_cost_decrease(ITERATIONS, found_costs)
+        #self.plot_iterations_data(ITERATIONS, found_lengths)
 
         # plot capacity offset vs. final costs
         #self.plot_offset_foundcosts(offsets, found_costs)
@@ -156,6 +162,24 @@ class ConfigFinder(Algorithm):
                 self.district.add_connection(battery, house)
                  
 
+    def get_longest_connection(self, connections):
+
+        max_dist = 0
+
+        # loop through clusters
+        for cluster in self.clusters:
+
+            # loop through houses in cluster
+            for house in connections[cluster['battery'].id]:
+
+                dist = self.calc_dist(house.location, cluster['centroid'])
+
+                # save maximum distance
+                if dist > max_dist:
+                    max_dist = dist
+
+        return max_dist
+                
     def plot_connections(self, district, free_houses):
 
         fig = plt.figure()
@@ -185,7 +209,6 @@ class ConfigFinder(Algorithm):
         plt.show()
 
 
-
     def plot_offset_foundcosts(self, offsets, found_costs):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
@@ -194,14 +217,14 @@ class ConfigFinder(Algorithm):
         ax.plot(offsets, found_costs)
         plt.show()
 
-    def plot_iterations_cost_decrease(self, iters, found_costs):
+    def plot_iterations_data(self, iters, data):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
-        plt.title(f"Costs of district after every iteration of ConfigFinder")
+        plt.title(f"Longest connection after each iter of ConfigFinder")
 
-        ax.plot(list(range(iters)), found_costs)
+        ax.plot(list(range(iters)), data)
 
         axes = plt.gca()
-        axes.set_ylim([57000,61000])
+        axes.set_ylim([25,50])
 
         plt.show()
