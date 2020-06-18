@@ -12,7 +12,7 @@ class District():
         self.connections = {}
         self.batteries = self.load_batteries(batteries_file)
         self.houses = self.load_houses(houses_file)
-        self.cables = []
+        self.cables = {}
 
     def load_batteries(self, file_path):
         """
@@ -61,15 +61,15 @@ class District():
         Removes connected house from battery 
         """
 
-        self.connections[battyer.id].remove(house)
+        self.connections[battery.id].remove(house)
 
     def reset_connections(self):
         """
         Resets the connections between the batteries and houses
         """
 
-        for houses in self.connections.values():
-            houses = []
+        for battery in self.batteries:
+            self.connections[battery.id] = []
 
     def add_cable(self, battery, house):
         """
@@ -122,10 +122,9 @@ class District():
 
     def get_usage(self, battery):
 
-        houses = self.connections[battery.id]
         usage = 0
-
-        for house in houses:
+        
+        for house in self.connections[battery.id]:
             usage += house.output
 
         return usage
@@ -159,6 +158,8 @@ class District():
 
         for house in houses:
             costs += self.calc_dist(house, battery) * 9
+
+        return costs
 
     def calc_connection_costs(self):
         """
