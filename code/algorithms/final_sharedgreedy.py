@@ -15,17 +15,10 @@ class SharedGreedy(Algorithm):
 
         # connectpoints {BATTERY_ID: [LOCATION, LOCATION, LOCATION]}
         self.connectpoints = self.init_connectpoints()
-        # cables {HOUSE_ID: [LOCATION, LOCATION, LOCATION]}
-        self.cables = {}
 
     def run(self):
 
         print("SharedGreedy running... ")
-
-        self.connectpoints = self.init_connectpoints()
-        self.cables = {}
-
-        costs = 0
 
         # loop through batteries
         for battery in self.district.batteries:
@@ -43,7 +36,7 @@ class SharedGreedy(Algorithm):
 
                 # make cable path
                 path = self.get_cable_path(house.location, connectpoint) 
-                self.cables[house.id] = path
+                self.district.cables[house.id] = path
 
                 # add path to connectpoints
                 for point in path:
@@ -135,7 +128,7 @@ class SharedGreedy(Algorithm):
                 path_x = []
                 path_y = []
 
-                for path in self.cables[house.id]:
+                for path in district.cables[house.id]:
                     x, y = path
                     path_x.append(x)
                     path_y.append(y)
