@@ -11,42 +11,30 @@ def plot(district):
     # configure plot
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    plt.title(f'District{district.id}') 
+    plt.title(f'District {district.id}') 
 
     # loop through batteries
-    for battery in district.get_batteries():
-        x, y = battery.get_location()
+    for battery in district.batteries:
+        x, y = battery.location
         plt.plot(x, y, 's', label = f'battery{battery.id}', markersize=10, \
             color=color[battery.id])
 
-    # coordinate lists for houses
-    x_houses = []
-    y_houses = []
+        # loop through houses
+        for house in district.connections[battery.id]:
+            x, y = house.location
+            plt.plot(x, y, 'p', markersize=10, color=color[battery.id])
 
-    # loop through houses
-    for house in district.get_houses():
-        x, y = house.get_location()
-        x_houses.append(x)
-        y_houses.append(y)
+            # save cable path in list
+            x_path = []
+            y_path = []
 
-    # loop through cables
-    for cable in district.cables:
+            for location in district.cables[house.id]:
+                x, y = location
+                x_path.append(x)
+                y_path.append(y)
 
-        x_path = []
-        y_path = []
-
-        # add coordinates of path to x_path and y_path
-        for location in cable.path:
-
-            x, y = location
-            x_path.append(x)
-            y_path.append(y)
-      
-        # add cable path to plot
-        plt.plot(x_path, y_path, "-", color=color[cable.battery.id])
-
-    # plot district    
-    plt.plot(x_houses, y_houses, 'kp', label = 'house', markersize=7)
+            plt.plot(x_path, y_path, '-', color=color[battery.id])
+ 
     ax.set_xticks(numpy.arange(0, 51, 1), minor=True)
     ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
     ax.grid(which='minor', alpha=0.2)
