@@ -1,6 +1,7 @@
 import copy
+from .algorithm import Algorithm
 
-class DepthFirst:
+class DepthFirst(Algorithm):
     """
     A Depth First algorithm that builds a 
     """
@@ -28,25 +29,28 @@ class DepthFirst:
         # retrieves all free batteries the house can connect to
         batteries = self.district.get_possible_batteries(house)
 
+        children = []
 
         # add an instance to the stack with each possible battery connection
         for battery in batteries:
 
+            # copy connections
             new_connections = {}
             for key, value in connections.items():
                 new_connections[key] = copy.copy(value)
-
+            
             new_connections[battery.id].append(house)
-            self.states.append(new_connections)
-            print("============NEW STATE============")
-            print(new_connections)
+            children.append(new_connections)
+
+        best_children = self.get_best_child(children, n=2)  
+        self.states += best_children
+            
         
     
     def check_solution(self, new_connections):
         """
         Checks and accepts better solutions than the current solution.
         """
-
         res = self.district.calc_connection_costs()
         new_total = res["total"]
         
@@ -65,7 +69,8 @@ class DepthFirst:
         Runs the algorithm untill all possible states are visited.
         """
     
-        for i in range(10):#while self.states:
+        while self.states:
+            #print(f"===============New State, statelength: {len(self.states)}==============")
             new_connections = self.get_next_state()
 
             # set the district connections
@@ -76,12 +81,50 @@ class DepthFirst:
 
             if house is not None:
                 self.build_children(new_connections, house)
-
+                
             else:
                 # continue looking for better districts.
                 self.check_solution(new_connections)
-
-            self.iter += 1
+            
+            self.iter += 1 
 
         # Update the input district with the best result found
         self.connections = self.best_solution
+
+    def get_best_child(self, children, n):
+        """
+        Returns the child state with the lowest cost
+        """
+
+        children.sort(key=lambda connections: self.calc_connection_costs(connections))
+
+        return children[:n]
+
+    def calc_battery_connections_costs(self, connections, battery):
+        """
+        Calculates costs of connection to battery
+        """
+
+        houses = connections[battery.id]
+        costs = 0
+
+        for house in houses:
+            costs += self.calc_dist(house.location, battery.location) * 9
+
+        return costs
+
+    def calc_connection_costs(self, connections):
+        """
+        Calculates the total cost of the district
+        """
+
+        connections_cost = 0
+        batt_cost = 0
+
+        for battery in self.district.batteries:
+            batt_cost += battery.cost
+            connections_cost += self.calc_battery_connections_costs(connections, battery)
+
+        costs = connections_cost + batt_cost
+        
+        return costs
