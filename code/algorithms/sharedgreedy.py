@@ -1,159 +1,143 @@
-
+import copy
 import random
-from operator import attrgetter
+import matplotlib.pyplot as plt
+import numpy
 
-"""
-Explanation of file:
-Status: 
-"""
+from .algorithm import Algorithm
 
-def greedy_solution(district):
-    """
-    Finds a solution by connecting houses to the neirest connectpoint with free capacity
-    """
-    complete = False
-    iter = 0
+class SharedGreedy(Algorithm):
 
-    while not complete:
-        # make sure district is reset
-        district.reset_cables()
+    def __init__(self, district):
 
-        # reset the connectpoints
-        district.reset_connectpoints()
+        self.district = district
+        self.free_houses = []
+        self.iterations = 0
 
-        # vertical order batteries and houses and connectpoints
-        batteries = district.get_batteries()
-        order_vertical(batteries)
+        # connectpoints {BATTERY_ID: [LOCATION, LOCATION, LOCATION]}
+        self.connectpoints = self.init_connectpoints()
 
-        houses = district.get_houses()
-        random.shuffle(houses)
-        order_vertical(houses)
-    
-        connectpoints = district.get_connectpoints()
-        order_vertical(connectpoints)
+    def run(self):
 
-        # make the connections
-        complete = add_cables(district, connectpoints, batteries, houses)
+        print("SharedGreedy running... ")
 
-        iter += 1
+        # loop through batteries
+        for battery in self.district.batteries:
 
+            houses = self.district.connections[battery.id]
 
-    # check if any of the batteries is overloaded
-    success = district.is_overload() == False 
+            # sort houses from on distance from battery
+            houses.sort(key=lambda house: self.calc_dist(house.location, battery.location))
 
-    return {"success": success, "iter": iter}
+            # loop through houses
+            for house in houses:
 
-def add_cables(district, connectpoints, batteries, houses):
-    """
-    Adds cable connections between the batteries and the houses
-    """
-    
-    # loop through the houses
-    for house in houses:
+                # find nearest connectpoint
+                connectpoint = self.get_nearest_connectpoint(battery, house)   
 
-        # update the free connectpoints list
-        free_connectpoints = available_connectpoints(connectpoints, batteries, house)
+                # make cable path
+                path = self.get_cable_path(house.location, connectpoint) 
+                self.district.cables[house.id] = path
 
-        if not free_connectpoints:
-            return False
+                # add path to connectpoints
+                for point in path:
+                    self.connectpoints[battery.id].append(point)  
+                        
+        # plot cables
+        self.plot_cables(self.district)
 
-        # choose the nearest free battery to the house
-        connectpoint = nearest_connectpoint(free_connectpoints, house)
+        print("SharedGreedy done ")
 
-        # connect the house and that battery
-        district.add_cable(connectpoint, house)
-    
-    return True 
+    def get_nearest_connectpoint(self, battery, house):
 
-def available_connectpoints(connectpoints, batteries, house):
-    """
-    Returns a list of connectpoints that still have capacity left to add a cable
-    """
+        return min(self.connectpoints[battery.id], key=lambda \
+            location: self.calc_dist(location, house.location))
 
-    # get nearest free battery
-    nearest_free_battery = get_nearest_free_battery(batteries, house)
+    def get_cable_path(self, start_location, end_location):
 
-    free_connectpoints = []
+        # unpack location
+        current_x, current_y = start_location
+        end_x, end_y = end_location
 
-    for connectpoint in connectpoints:
+        # initialize path
+        path = [(current_x, current_y)] 
 
-        # check if connectpoint belongs to nearest free battery
-        if connectpoint.get_battery() == nearest_free_battery:
-            free_connectpoints.append(connectpoint)
+        # get movement direction
+        hor_dist = end_x - current_x
+        if abs(hor_dist) > 0:
+            hor_move = int(hor_dist / abs(hor_dist))
+        ver_dist = end_y - current_y    
+        if abs(ver_dist) > 0:
+            ver_move = int(ver_dist / abs(ver_dist))
 
-    return free_connectpoints
+        # initialize movements list
+        movements = []
 
+        # add horizontal movements 
+        for x in range(abs(hor_dist)):
+            movements.append((hor_move, 0))
+        
+        # add vertical movements to list
+        for y in range(abs(ver_dist)):
+            movements.append((0, ver_move))
 
-def nearest_connectpoint(connectpoints, house):
-    """
-    Calculates which battery in the list is the nearest to the given house
-    """
+        # shuffle list of movements
+        random.shuffle(movements)
 
-    # get the locations
-    house_location = house.get_location()
-    connect_location = connectpoints[0].get_location()
+        # make path
+        for movement in movements:
 
-    # define the first battery in the list as the minimum distance
-    min_dist = calc_manhattan_dist(house_location, connect_location)
-    nearest_connectpoint = connectpoints[0]
+            # extract movement
+            move_x, move_y = movement
 
-    # check if the other batteries are nearer to the house
-    for connectpoint in connectpoints:
+            # increment current position
+            current_x += move_x
+            current_y += move_y
 
-        connect_location = connectpoint.get_location()
+            # add position to path
+            path.append((current_x, current_y))
 
-        dist = calc_manhattan_dist(house_location, connect_location)
+        return path 
 
-        if dist < min_dist: 
-            nearest_connectpoint = connectpoint
-            min_dist = dist
-    
-    return nearest_connectpoint
+    def init_connectpoints(self):
 
-def get_nearest_free_battery(batteries, house):
+        connectpoints = {}
 
-    house_location = house.get_location()
-    min_dist = 100
-    nearest_free_battery = None
+        for battery in self.district.batteries:
 
-    for battery in batteries:
+            connectpoints[battery.id] = [battery.location]
 
-        battery_location = battery.get_location()
-        dist = calc_manhattan_dist(house_location, battery_location)
+        return connectpoints
 
-        if dist < min_dist and not battery.calc_overload(house):
-            min_dist = dist
-            nearest_free_battery = battery
+    def plot_cables(self, district):
 
-    if nearest_free_battery is None:
-        print("error: no free battery found")
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1) 
+        plt.title(f'District{district.id}')
 
-    return nearest_free_battery
+        color = {0: "blue", 1:"red" ,2:"yellow",3:"cyan", 4:"magenta"} 
 
-def calc_manhattan_dist(start, goal):
-    """
-    Calculates the manhattan distance from two tuple coordinates
-    """
+        # loop through batteries
+        for battery in district.batteries:
+            x, y = battery.location
+            plt.plot(x, y, 'ks', label = f'battery{battery.id}', color=color[battery.id], markersize=10)
 
-    # set the seperate start and goal coordinates
-    x, y = start
-    x_goal, y_goal = goal
+            for house in district.connections[battery.id]:             
+                x, y = house.location
+                plt.plot(x, y, 'p', color=color[battery.id], markersize=7, alpha=0.5)
 
-    # calculate the absolute distances
-    dist = abs(x - x_goal) + abs(y - y_goal)
+                path_x = []
+                path_y = []
 
-    return dist
+                for path in district.cables[house.id]:
+                    x, y = path
+                    path_x.append(x)
+                    path_y.append(y)
 
-def order_vertical(objects_list):
-    """
-    Order batteries on vertical position
-    """
+                plt.plot(path_x, path_y, '-', color=color[battery.id], alpha=0.3)
 
-    objects_list.sort(key=vertical_location, reverse=True)
-
-def vertical_location(obj):
-    """
-    Returns vertical position of object
-    """
-
-    return obj.get_location()[1]
+        # plot district  
+        ax.set_xticks(numpy.arange(0, 51, 1), minor=True)
+        ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
+        ax.grid(which='minor', alpha=0.2)
+        plt.legend()
+        plt.show()

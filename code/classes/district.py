@@ -1,7 +1,7 @@
 import csv
 
-from .final_battery import Battery
-from .final_house import House
+from .battery import Battery
+from .house import House
 from .final_cable import Cable
 
 BATTERY_COST = 5000
@@ -63,6 +63,13 @@ class District():
 
         self.connections[battery.id].remove(house)
 
+    def set_connections(self, connections):
+        """
+        Sets a the district to the given connections
+        """
+
+        self.connections = connections
+
     def reset_connections(self):
         """
         Resets the connections between the batteries and houses
@@ -113,12 +120,41 @@ class District():
 
         return self.houses
 
+    
+
+    def get_empty_house(self):
+        """
+        Returns an empty house
+        """
+
+        connected_houses = []
+        for values in self.connections.values():
+            connected_houses += values
+
+     
+        for house in self.houses:
+            if house not in connected_houses:
+                return house
+        
+        return None
+
     def get_batteries(self):
         """
         Returns a list of battery objects in the district
         """
 
         return self.batteries
+
+    def get_possible_batteries(self, house):
+        """
+        Returns a list of batteries a house can connect to
+        """
+        empty_batteries = []
+        for battery in self.batteries:
+            if not self.calc_overload(battery, house):
+                empty_batteries.append(battery)
+        
+        return empty_batteries
 
     def get_usage(self, battery):
 

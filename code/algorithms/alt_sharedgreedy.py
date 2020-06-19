@@ -15,39 +15,82 @@ class SharedGreedy(Algorithm):
 
         # connectpoints {BATTERY_ID: [LOCATION, LOCATION, LOCATION]}
         self.connectpoints = self.init_connectpoints()
+        # cables {HOUSE_ID: [LOCATION, LOCATION, LOCATION]}
+        self.cables = {}
 
     def run(self):
 
         print("SharedGreedy running... ")
 
-        # loop through batteries
-        for battery in self.district.batteries:
+        self.connectpoints = self.init_connectpoints()
+        self.cables = {}
 
-            houses = self.district.connections[battery.id]
+        costs = 0
+        #Loop through the districts
 
-            # sort houses from on distance from battery
-            houses.sort(key=lambda house: self.calc_dist(house.location, battery.location))
+        for i in range(3):
+            # loop through batteries
+            for battery in self.district.batteries:
 
-            # loop through houses
-            for house in houses:
+                houses = self.district.connections[battery.id]
 
-                # find nearest connectpoint
-                connectpoint = self.get_nearest_connectpoint(battery, house)   
+                # sort houses from on distance from battery
+                houses.sort(key=lambda house: self.calc_dist(house.location, battery.location))
 
-                # make cable path
-                path = self.get_cable_path(house.location, connectpoint) 
-                self.district.cables[house.id] = path
+                # loop through houses
+                for house in houses:
 
-                # add path to connectpoints
-                for point in path:
-                    self.connectpoints[battery.id].append(point)  
-                        
-        # plot cables
-        self.plot_cables(self.district)
+                    # find nearest connectpoint
+                    connectpoint = self.get_nearest_connectpoint(battery, house)   
+                
+                    # check if house has a path, if not make path
+                    if house.id not in self.cables:
+                        # make cable path
+                        path = self.get_cable_path(house.location, connectpoint)
+                        print(path)
+                        self.cables[house.id] = path
+
+                        # add path to connectpoints
+                        for point in path:
+                            self.connectpoints[battery.id].append(point)
+                    else:
+                        path = self.cables[house.id]
+    
+                        path_len = len(self.cables[house.id])# -1?
+                        dist = self.calc_dist(house.location, connectpoint)
+
+                        if dist < path_len:
+
+                            #print("shorter")
+                            #remove current path connectpoints
+                            #for point in path:
+                                #self.connectpoints[battery.id].remove(point)
+                            
+
+                            #add new path
+                            path = self.get_cable_path(house.location, connectpoint)
+                            print(path)
+                        self.cables[house.id] = path
+
+                        # add path to connectpoints
+                        for point in path:
+                            self.connectpoints[battery.id].append(point)
+            # plot cables
+            print("NEW CONFIG")
+            print(len(self.cables))
+            self.plot_cables(self.district)
 
         print("SharedGreedy done ")
 
     def get_nearest_connectpoint(self, battery, house):
+
+        #remove house path/connectpoints from the list
+        if house.id in self.cables:
+            path = self.cables[house.id]
+
+            for point in path:
+                self.connectpoints[battery.id].remove(point)
+
 
         return min(self.connectpoints[battery.id], key=lambda \
             location: self.calc_dist(location, house.location))
@@ -128,10 +171,13 @@ class SharedGreedy(Algorithm):
                 path_x = []
                 path_y = []
 
-                for path in district.cables[house.id]:
+                for path in self.cables[house.id]:
                     x, y = path
                     path_x.append(x)
                     path_y.append(y)
+                
+                #print(path_x)
+                #print(path_y)
 
                 plt.plot(path_x, path_y, '-', color=color[battery.id], alpha=0.3)
 
