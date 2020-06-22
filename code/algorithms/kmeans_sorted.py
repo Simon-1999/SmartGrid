@@ -1,7 +1,7 @@
 
 from itertools import chain
 from .algorithm import Algorithm
-from .final_kmeans import Kmeans
+from .kmeans import Kmeans
 
 class KmeansSorting(Algorithm):
     def __init__(self, district, clusters):

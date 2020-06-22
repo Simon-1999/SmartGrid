@@ -46,6 +46,7 @@ class SharedGreedy(Algorithm):
         self.plot_cables(self.district)
 
         print("SharedGreedy done ")
+        return self.district
 
     def get_nearest_connectpoint(self, battery, house):
 

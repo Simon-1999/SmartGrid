@@ -1,21 +1,27 @@
 import numpy as np
 import time
 import copy
+from .algorithm import Algorithm
 
-def simple_swap(config_district):
+class SimpleSwap(Algorithm):
     """
     Optimizing solution found by Manhattan distance based configuration, 
     based on the swapping of similar houses to a closer battery.
     """
-    print()
-    print("========== optimizing... (simple_swap algorithm) ===========")
-    print()
-    
-    copied_district = copy.deepcopy(config_district)
 
-    # sort cables based on length
-    sorted_cables = sort_cables(copied_district.cables)
-    i = 0
+    def __init__(self, district):
+        self.district_copy = copy.deepcopy(self.district)
+
+    
+    def run(self):
+
+        print()
+        print("========== optimizing... (simple_swap algorithm) ===========")
+        print()
+
+        # sort connections based on length
+        sorted_connections = sort_connections(self.district_copy)
+        i = 0
     
     while i < len(sorted_cables): # and swapcount is not 0
         time.sleep(0.2)

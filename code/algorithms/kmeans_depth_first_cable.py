@@ -1,9 +1,9 @@
 import copy
 from .algorithm import Algorithm
 
-CAPACITY_OFFSET = 200
+CAPACITY_OFFSET = 300
 
-class DepthFirst(Algorithm):
+class DepthFirstLength(Algorithm):
     """
     A Depth First algorithm that builds a 
     """
@@ -16,7 +16,7 @@ class DepthFirst(Algorithm):
         self.best_solution = None
         self.best_total = float('inf')
         self.longest_connection = float('inf')
-        self.iter = 0
+        self.iterations = 0
         self.n = n
         self.process = []
 
@@ -61,10 +61,10 @@ class DepthFirst(Algorithm):
             total = self.calc_connection_costs(new_connections)
 
             # save the process
-            solution = {"iter": self.iter, "best_total": total, "longest_connection": self.longest_connection}
+            solution = {"iter": self.iterations, "best_total": total, "longest_connection": self.longest_connection}
             self.process.append(solution)
             
-            print(self.iter)
+            print(self.iterations)
             print(len(self.states))
             print(f"longest connection: {self.longest_connection}")
             print(f"New best value: {total}")
@@ -91,7 +91,7 @@ class DepthFirst(Algorithm):
                 # continue looking for better districts.
                 self.check_solution(new_connections)
 
-            self.iter += 1
+            self.iterations += 1
         # Update the input district with the best result found
         self.connections = self.best_solution
 

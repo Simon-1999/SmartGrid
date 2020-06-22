@@ -3,7 +3,7 @@ from .algorithm import Algorithm
 
 CAPACITY_OFFSET = 200
 
-class DepthFirst(Algorithm):
+class DepthFirstCosts(Algorithm):
     """
     A Depth First algorithm that builds a 
     """
@@ -14,7 +14,7 @@ class DepthFirst(Algorithm):
 
         self.best_solution = None
         self.best_total = float('inf')
-        self.iter = 0
+        self.iterations = 0
         self.n = n
         self.process = []
 
@@ -64,9 +64,9 @@ class DepthFirst(Algorithm):
         if new_total <= old_total:
             self.best_solution = new_connections
             self.best_total = new_total
-            print(self.iter)
+            print(self.iterations)
             print(len(self.states))
-            solution = {"iter": self.iter, "best_total": self.best_total}
+            solution = {"iter": self.iterations, "best_total": self.best_total}
             self.process.append(solution)
             print(f"New best value: {self.best_total}")
 
@@ -92,7 +92,7 @@ class DepthFirst(Algorithm):
                 # continue looking for better districts.
                 self.check_solution(new_connections)
 
-            self.iter += 1
+            self.iterations += 1
         # Update the input district with the best result found
         self.connections = self.best_solution
 
@@ -114,8 +114,6 @@ class DepthFirst(Algorithm):
 
             while self.district.get_usage(battery) > (battery.capacity - CAPACITY_OFFSET):
 
-                # remove house
-                connections[battery.id].pop(0)
                 # remove house
                 house = connections[battery.id].pop(0)
                 self.district.houses.remove(house)

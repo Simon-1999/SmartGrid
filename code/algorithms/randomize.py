@@ -5,8 +5,6 @@ Status:
 """
 
 import random 
-import copy
-
 from .algorithm import Algorithm
 
 class Randomize(Algorithm):
@@ -22,20 +20,21 @@ class Randomize(Algorithm):
 
             self.iterations += 1
 
-            # remove cables
-            self.district.reset_cables()
-
             # randomize houses list
             self.order_random(self.district.get_houses())
 
             # add cable connections
-            self.assign_cables()
+            self.assign_connections()
 
             # check if configuration is valid
             if not self.district.is_overload():
                 break
 
+            self.district.reset_connections()
+
         self.print_result(self.district)
+
+        self.set_district_cables(self.district)
 
         print("randomize done")
 
@@ -48,7 +47,7 @@ class Randomize(Algorithm):
 
         return random.shuffle(list_objects)
 
-    def assign_cables(self):
+    def assign_connections(self):
         """
         Assign houses to batteries
         """
@@ -60,7 +59,7 @@ class Randomize(Algorithm):
             battery = self.calc_least_used_batt()
 
             # add cable 
-            self.district.add_cable(battery, house)
+            self.district.add_connection(battery, house)
 
     def calc_least_used_batt(self):
         """
@@ -68,4 +67,4 @@ class Randomize(Algorithm):
         """
 
         return min(self.district.get_batteries(), key=lambda \
-            battery: battery.usage)
+            battery: self.district.get_usage(battery))
