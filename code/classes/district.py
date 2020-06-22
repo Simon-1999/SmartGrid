@@ -106,12 +106,7 @@ class District():
         Remove all cables
         """
     
-        cables = self.cables
-
-        for cable in cables:
-            del cable
-
-        self.cables = []
+        self.cables = {}
  
     def get_houses(self):
         """
@@ -216,6 +211,28 @@ class District():
         }
 
         return costs
+
+    def calc_cables_costs(self):
+        """
+        Calculates the total cost of the district with shared cables
+        """
+
+        cables_cost = 0
+        batt_cost = 0
+        for battery in self.batteries:
+            batt_cost += battery.cost
+        
+        for path in self.cables.values():
+            cables_cost += (len(path) - 1) * 9
+        
+        costs = {
+            "cables": cables_cost,
+            "batteries": batt_cost,
+            "total": cables_cost + batt_cost
+        }
+
+        return costs
+
 
     def calc_dist(self, object1, object2):
         """
