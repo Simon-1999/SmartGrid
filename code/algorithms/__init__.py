@@ -24,3 +24,4 @@ from .randomize import Randomize
 from .sharedgreedy import SharedGreedy
 from .randomize import Randomize
 from .random_opt import RandomOptimize
+from .simple_swap1 import SimpleSwap
