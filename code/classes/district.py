@@ -19,21 +19,67 @@ class District():
     Methods
     ----------
     load_batteries(file_path)
+        Loads batteries into district
 
     load_houses(file_path)
+        Loads houses into district
 
-    add_connection(self, battery, house)
+    add_connection(battery, house)
+        Connects house to a battery
 
-    remove_connection(self, battery, house)
+    remove_connection(battery, house)
+        Removes specific connection from the configuration
 
-    set_connections(self, connections)
+    set_connections(connections)
+        Sets connections in a district to a given configuration
 
-    reset_connections(self)
+    reset_connections()
+        Resets the whole district
 
-    add_cable(self, battery, house)
+    get_cables()
+        Get all the cable data in the district
 
-    remove_cable(self, cable)
+    reset_cables()
+        Remove all cable data from the district
+
+    def get_houses()
+        Get all houses in a district
+        
+    def get_empty_house()
+        Find a house that is not yet connected
+
+    def get_batteries()
+        Get all batteries in the district
+
+    get_possible_batteries(house)
+        Get all available batteries for a house
+
+    get_usage(battery)
+        Get current usage by connections of a battery
+
+    is_overload()
+        Check if district has a valid configuration
+
+    calc_overload(battery, house)
+        Check if a house would overload a battery when connected
+
+    calc_battery_connections_costs(battery)
+        Calculate costs of all connections to a battery
+
+    calc_connection_costs()
+        Calculate costs of a unique district
+
+    calc_cables_costs(self)
+        Calculate costs of a shared district
+
+    calc_dist(object1, object2)
+        Calculate Manhattan distance between two objects in the district
+    
+    all_houses_connected()
+        Check if all houses have a unique cable
+
     """
+
     def __init__(self, uid, batteries_file, houses_file):
         """Parameters
         ----------
@@ -56,7 +102,12 @@ class District():
 
         Parameters
         ----------
+        file_path : str
 
+        Returns
+        ----------
+        list
+            List of dictionaries with battery data
         """
 
         batteries = []
@@ -73,9 +124,19 @@ class District():
 
         return batteries
 
+
     def load_houses(self, file_path):
         """
-        Loads all the houses into the district
+        Loads all the houses into the district and initializes connections dictionary.
+
+        Parameters
+        ----------
+        file_path : str
+
+        Returns
+        ----------
+        list
+            List with house data
         """
         
         houses = []
@@ -89,77 +150,82 @@ class District():
 
         return houses
 
+
     def add_connection(self, battery, house):
-        """
-        Connect house to battery
+        """Connects house to battery by modifying battery data.
+
+        Parameters
+        ----------
+        battery : Battery object
+
+        house : House object
         """
 
         self.connections[battery.id].append(house)
 
+
     def remove_connection(self, battery, house):
-        """
-        Removes connected house from battery 
+        """Removes house from battery by modifying battery data.
+
+        Parameters
+        ----------
+        battery : Battery object
+
+        house : House object
         """
 
         self.connections[battery.id].remove(house)
 
+
     def set_connections(self, connections):
-        """
-        Sets a the district to the given connections
+        """Modifies a district to contain the given connections. 
+
+        Parameters
+        ----------
+        connections : dict
         """
 
         self.connections = connections
 
+
     def reset_connections(self):
-        """
-        Resets the connections between the batteries and houses
+        """Resets the connections between the batteries and houses by removing all stored information.
         """
 
         for battery in self.batteries:
             self.connections[battery.id] = []
 
-    def add_cable(self, battery, house):
-        """
-        Adds a cable object
-        """
-
-        cable = Cable(battery, house)
-        self.cables.append(cable)
-
-    def remove_cable(self, cable):
-        """
-        Removes the cable from the list of cables
-        """
-
-        self.cables.remove(cable)
-        del cable
 
     def get_cables(self):
-        """
-        Returns the list of cables in the district
+        """Returns the dictionary of cables in the district.
         """
 
         return self.cables
 
     def reset_cables(self):
-        """
-        Remove all cables
+        """Remove all cables in a district.
         """
     
         self.cables = {}
+
  
     def get_houses(self):
-        """
-        Returns a list of house objects in the district
+        """Retrieve all houses in a district.
+
+        Returns
+        ----------
+        list
         """
 
         return self.houses
-
     
 
     def get_empty_house(self):
-        """
-        Returns an empty house
+        """Returns a house that is not yet connected, if there is one.
+
+        Returns
+        ----------
+        House object
         """
 
         connected_houses = []
@@ -173,17 +239,30 @@ class District():
         
         return None
 
+
     def get_batteries(self):
-        """
-        Returns a list of battery objects in the district
+        """Retrieve all batteries in a district.
+
+        Returns
+        ----------
+        list
         """
 
         return self.batteries
 
+
     def get_possible_batteries(self, house):
+        """Returns a list of batteries a house can connect to regarding battery capacity and house output.
+
+        Parameters
+        ----------
+        house : House object
+
+        Returns
+        ----------
+        list
         """
-        Returns a list of batteries a house can connect to
-        """
+
         empty_batteries = []
         for battery in self.batteries:
             if not self.calc_overload(battery, house):
@@ -191,8 +270,18 @@ class District():
         
         return empty_batteries
 
-    def get_usage(self, battery):
 
+    def get_usage(self, battery):
+        """Calculates how much of the battery capacity is currently being used by connected houses.
+
+        Parameters
+        ----------
+        battery : Battery object
+
+        Returns
+        ----------
+        float
+        """
         usage = 0
         
         for house in self.connections[battery.id]:
@@ -201,8 +290,11 @@ class District():
         return usage
 
     def is_overload(self):
-        """
-        Returns if the usage exceeds capacity
+        """Returns if the usage of any battery exceeds capacity.
+
+        Returns
+        ----------
+        bool
         """
         
         for battery in self.batteries:
@@ -212,16 +304,33 @@ class District():
         
         return False
 
+
     def calc_overload(self, battery, house):
-        """
-        Returns if house output exceeds battery capacity
+        """Returns if house output would exceed battery capacity if connected.
+
+        Parameters
+        ----------
+        battery : Battery object
+
+        house : House object
+
+        Returns
+        ----------
+        bool
         """
 
         return self.get_usage(battery) + house.output > battery.capacity
 
     def calc_battery_connections_costs(self, battery):
-        """
-        Calculates costs of connection to battery
+        """Calculates costs of current connections to given battery.
+
+        Parameters
+        ----------
+        battery : Battery object
+
+        Returns
+        ----------
+        int
         """
 
         houses = self.connections[battery.id]
@@ -232,9 +341,13 @@ class District():
 
         return costs
 
+
     def calc_connection_costs(self):
-        """
-        Calculates the total cost of the district
+        """Calculates the total cost of the district, adding battery costs and connections costs.
+
+        Returns
+        ----------
+        dict
         """
 
         connections_cost = 0
@@ -252,9 +365,13 @@ class District():
 
         return costs
 
+
     def calc_cables_costs(self):
-        """
-        Calculates the total cost of the district with shared cables
+        """Calculates the total cost of the district with shared cables instead of unique connections.
+
+        Returns
+        ----------
+        dict
         """
 
         cables_cost = 0
@@ -275,8 +392,11 @@ class District():
 
 
     def calc_dist(self, object1, object2):
-        """
-        Calculates manhatten distance between two objects
+        """Calculates manhatten distance between two objects.
+
+        Returns
+        ----------
+        int
         """
 
         x1, y1 = object1.location
@@ -284,9 +404,13 @@ class District():
 
         return abs(x1 - x2) + abs(y1 - y2) 
 
+
     def all_houses_connected(self):
-        """
-        Checks if there are 150 cables
+        """Checks if there are 150 cables in a unique cable district.
+
+        Returns
+        ----------
+        bool
         """
 
         houses_connected = 0
