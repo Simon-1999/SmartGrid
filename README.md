@@ -1,6 +1,6 @@
 # SmartGrid
 
-Project for University of Amsterdam course *Programmeertheorie / Heuristieken*
+### Project for University of Amsterdam course *Programmeertheorie / Heuristieken*
 
 When using green energy, sources like solar panels or windmills often produce more than necessary. Luckily, this surplus can be stored in batteries. 
 
@@ -41,8 +41,12 @@ navigation.
 - **/main.py**: code to run the full program in an interactive way, with a possibility to choose which algorithm to use.
 
 ## Authors
-[Simon van Eeden](mailto:simonveeden@hotmail.com)
-[Hendrik Scheeres](mailto:hscheeresyt@gmail.com)
+[Simon van Eeden](mailto:simonveeden@hotmail.com)  
+[Hendrik Scheeres](mailto:hscheeresyt@gmail.com)  
 [Noah van de Bunt](mailto:noahvandebunt@outlook.com)
 
 June 2020, Amsterdam
+
+## Acknowledgements
+
+Many thanks to our supervisors Jasper den Duijf and Okke van Eck for all their good advice, critique and motivational moments. 
