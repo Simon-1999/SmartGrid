@@ -1,6 +1,4 @@
-from code.classes import district
-from code.algorithms import randomize
-from code.visualization import draw
+from code import classes, algorithms, visualization
 
 if __name__ == "__main__":
 
@@ -12,23 +10,26 @@ if __name__ == "__main__":
     houses_file = f"data/district_{uid}/district-{uid}_houses.csv"
 
     # make a test district to print
-    test_district = district.District(uid, batteries_file, houses_file)
-    house = test_district.houses[47]
+    test_district = classes.District(uid, batteries_file, houses_file)
 
-    # run random algorithm
-    randomize.random_solution(test_district)
+    kmeans_district, clusters = algorithms.Kmeans(test_district).run()
+    kmeans_sorted = algorithms.KmeansSorting(kmeans_district, clusters).run()
+
+    print('18')
+    configuration = algorithms.ConfigFinder(kmeans_sorted, clusters).run()
+    print('19')
 
     # print the number of cables to check
-    print(len(test_district.cables))
+#     print(len(test_district.cables))
 
     # return the total cost of the district
-    costs = test_district.calc_costs()
+    costs = test_district.calc_connection_costs()
     total = costs["total"]
-    cables = costs["cables"]
+    cables = costs["connections"]
     batteries = costs["batteries"]
 
     # draw plot
-    draw.plot(test_district)
+  #  draw.plot(test_district)
 
     print(f"Total cost of the district:{total}")
     print(f"Total cost of the cables:{cables}")

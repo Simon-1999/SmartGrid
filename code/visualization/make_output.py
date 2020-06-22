@@ -1,10 +1,18 @@
 import json
-#from .algorithms.shareddistrict import District
 
 def output_doc(district, shared):
     """
     Writes a District object to a .json output file. 
+
+    Parameters
+    ----------
+    district : District object
+        Configuration of the district to write output for
+
+    shared : bool
+        Whether the cables are unique or shared in the district
     """
+
     # create a list to store all the data in
     data = []
 
@@ -41,7 +49,6 @@ def output_doc(district, shared):
 
             # add house dict to battery
             battery_data['houses'].append(house_info)
-
 
     # write everything to output file
     with open("output.json", "w+") as outfile:

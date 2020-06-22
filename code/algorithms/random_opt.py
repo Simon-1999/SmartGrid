@@ -3,7 +3,7 @@ from .algorithm import Algorithm
 
 class RandomOptimize(Algorithm):
     """
-    Finds a solution by connecting houses to the neirest battery with free capacity
+    Finds a solution by connecting houses to the nearest battery with free capacity
     """
     def run(self):    
 

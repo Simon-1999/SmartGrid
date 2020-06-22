@@ -1,14 +1,58 @@
+"""Tries repeatedly to swap houses with a long cable with another house regarding their batteries, resulting in lower costs
+
+The GroupSwap algorithm takes a configurated district as positional argument. The algorithm then takes out the longest cables and 
+repeatedly takes a sample of these. If a new, random configuration of this sample results in lower costs, it is taken as the current
+best solution. This goes on until after the specified amount of iterations.
+"""
+
 import copy
 import random
 
 from .algorithm import Algorithm
 
 class GroupSwap(Algorithm):
-    """
-    Swaps longest cables with different sizes
+    """Repeatedly reassigns longest district cables randomly for #iterations, returns the cheapest found district 
+
+    GroupSwap respectively takes the 50 and then 20 longest cables of a district to pull a random sample from and to randomly reassign.
+    This is repeated for every group size for the coded amount of random_iterations. The best found configuration is returned. 
+
+    Attributes
+    ----------
+    district : District object
+        An input district to perform the algorithm on
+
+    groupsizes : list
+        Group sizes to use, we use 50 and 20
+
+    iterations : int
+        Number of iterations done by the algorithm, starts at 0
+
+    best_solution: District object
+        To store the best solution in, this updates as the algorithm goes on
+
+    Methods
+    ----------
+    run()
+        Runs the algorithm
+
+    remove_cables()
+        Removes cables from the district
+
+    assign_cables()
+        Assigns free houses to available batteries
+
+    get_longest_cables(groupsize)
+        Returns the longest cables in the district
+
+    get_nearest_free_battery(house)
+        Returns nearest battery with enough free capacity
     """
 
     def __init__(self, district):
+        """Parameters:
+        ----------
+        district : District object
+        """
 
         self.district = copy.deepcopy(district) 
         self.groupsizes = [50, 20] 
@@ -16,8 +60,13 @@ class GroupSwap(Algorithm):
         self.best_solution = copy.deepcopy(district)
 
     def run(self):
+        """Runs the GroupSwap algorithm
 
-        print("group_swap running...")
+        Returns
+        ----------
+        District object
+            Lowest cost district the algorithm has found
+        """
 
         min_costs = self.district.calc_costs()['total']
         solution_found = False
@@ -34,8 +83,8 @@ class GroupSwap(Algorithm):
                 longest_cables = self.get_longest_cables(groupsize)
                 self.remove_cables(longest_cables)
 
-                # asign new cables
-                if self.asign_cables():
+                # assign new cables
+                if self.assign_cables():
 
                     # calculate costs
                     costs = self.district.calc_costs()['total']
@@ -59,23 +108,30 @@ class GroupSwap(Algorithm):
         return self.best_solution
 
     def remove_cables(self, cables):
-        """
-        Removes cables from district
+        """Removes cables from a district.
+
+        Parameters
+        ----------
+        cables : list
+            Cables to remove from the district
         """
 
         for cable in cables:
 
             self.district.remove_cable(cable)
 
-    def asign_cables(self):
-        """
-        Assign house to cable an add cable
+    def assign_cables(self):
+        """Assign house to cable an add this information to the district.
+
+        Returns
+        ----------
+        bool
         """
 
         # random shuffle houses list
         random.shuffle(self.district.get_houses())
 
-        # asign all free houses to nearest free battery
+        # assign all free houses to nearest free battery
         for house in self.district.get_houses():
 
             # assign free house to battery
@@ -92,8 +148,15 @@ class GroupSwap(Algorithm):
         return True
 
     def get_longest_cables(self, groupsize):
-        """
-        returns list of longest cables of size groupsize
+        """Returns list of longest cables in the district of size groupsize
+
+        Parameters
+        ----------
+        groupsize : int
+
+        Returns
+        ----------
+        list
         """
 
         # sort cables on length
@@ -103,8 +166,15 @@ class GroupSwap(Algorithm):
         return self.district.get_cables()[:groupsize]
 
     def get_nearest_free_battery(self, house):
-        """
-        returns nearest free battery
+        """Returns the nearest available battery to a house. 
+
+        Parameters
+        ----------
+        house : House object
+
+        Returns
+        ---------
+        Battery object
         """
 
         # sort list of batteries on distance from house

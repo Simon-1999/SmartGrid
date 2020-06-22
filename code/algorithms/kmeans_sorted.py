@@ -1,20 +1,47 @@
+"""Modifies a Kmeans-distributed district to have houses sorted based on their distance
+to other districts 
+"""
 
 from itertools import chain
 from .algorithm import Algorithm
 from .kmeans import Kmeans
 
 class KmeansSorting(Algorithm):
+    """Sorts houses in each cluster of a district based on their distance to the closest other cluster. 
+
+    For each house, the algorithm determines its minimum distance to houses of other clusters. The houses in each cluster are sorted
+    based on this distance, and a new, sorted district is returned. 
+
+    Attributes
+    ----------
+    sort_district: District object
+        District object that needs to be sorted
+        
+    clusters : list
+        clusters in a District object
+
+    Methods
+    ----------
+    run()
+        Runs the sorting process
+
+    dist_other_house(house, clusters)
+        Calculates the distance of a house to the closest house of another cluster
+    """
+
     def __init__(self, district, clusters):
         self.clusters = clusters
         self.sort_district = district
 
     def run(self):
-        """
-        Modifies a Kmeans-distributed district to have houses sorted based on their distance
+        """Modifies a Kmeans-distributed district to have houses sorted based on their distance
         to other districts 
-        """
 
-        print("=======running KmeansSorting=========")
+        Returns
+        ----------
+        District object
+            A district in which the houses in each cluster are sorted 
+        """
 
         # loop through every cluster
         for cluster in self.clusters:
@@ -30,8 +57,19 @@ class KmeansSorting(Algorithm):
         return self.sort_district
     
     def dist_other_house(self, house, clusters):
-        """
-        Returns distance of a house to the closest house of another cluster
+        """Returns distance of a house to the closest house of another cluster.
+
+        Parameters
+        ----------
+        house : House object
+            House to calculate distance to other clusters from
+        clusters: list
+            Existing clusters in a district
+
+        Returns
+        ----------
+        int
+            Distance to closest house of another cluster
         """
         
         min_dist = float('inf')

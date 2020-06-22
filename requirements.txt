@@ -1,2 +1,8 @@
+csv
+copy
+itertools
+json
 numpy
 matplotlib
+random
+time

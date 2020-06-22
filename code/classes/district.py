@@ -1,3 +1,8 @@
+"""Representation of a a SmartGrid district. A district is defined by its batteries and
+houses, and an ID. Next, while running any algorithm, connections and cables are added to create a 
+final configuration. 
+"""
+
 import csv
 
 from .battery import Battery
@@ -7,16 +12,51 @@ from .final_cable import Cable
 BATTERY_COST = 5000
 
 class District():
+    """This class upholds a data structure for a SmartGrid with houses and batteries, and creates the
+    possibility to add connections and unique or shared cables between houses and batteries. All information
+    regarding energy capacities and outputs are also stored appropriately. 
+
+    Methods
+    ----------
+    load_batteries(file_path)
+
+    load_houses(file_path)
+
+    add_connection(self, battery, house)
+
+    remove_connection(self, battery, house)
+
+    set_connections(self, connections)
+
+    reset_connections(self)
+
+    add_cable(self, battery, house)
+
+    remove_cable(self, cable)
+    """
     def __init__(self, uid, batteries_file, houses_file):
+        """Parameters
+        ----------
+        uid : int
+
+        batteries_file : .csv-file
+
+        houses_file : .csv_file
+        """
         self.id = uid
         self.connections = {}
         self.batteries = self.load_batteries(batteries_file)
         self.houses = self.load_houses(houses_file)
         self.cables = {}
 
+
     def load_batteries(self, file_path):
         """
-        Loads all the batteries into the district and initialize connections dictionary
+        Loads all the batteries into the district and initializes connections dictionary.
+
+        Parameters
+        ----------
+
         """
 
         batteries = []

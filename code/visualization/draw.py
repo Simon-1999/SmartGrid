@@ -3,7 +3,11 @@ import numpy
 
 def plot(district):
     """ 
-    Draw grid with houses, batteries and connections
+    Draws grid with houses, batteries and connections, color-coded. 
+
+    Parameters
+    ----------
+    district : District object
     """
 
     color = {0: "blue", 1:"red" ,2:"yellow",3:"cyan", 4:"magenta"}

@@ -1,3 +1,6 @@
+"""
+"""
+
 import copy
 import random
 import matplotlib.pyplot as plt
@@ -20,11 +23,9 @@ class ConfigFinder(Algorithm):
 
         CAPACITY_OFFSET = 350
         ITERATIONS = 50000
-        # min_costs = float('inf')
+        min_costs = float('inf')
         min_longest_connection_dist = float('inf')
         best_connections = copy.copy(self.district.connections)   
-
-        found_lengths = []
 
         # set current_connections
         connections = {}
@@ -44,31 +45,31 @@ class ConfigFinder(Algorithm):
             self.remove_connections(CAPACITY_OFFSET)
 
             # add connections
-            self.add_random_connections()
+            self.add_connections()
 
             # check if solution is valid
             if self.district.all_houses_connected():
 
 # ================= CODE FOR COST HEURISTIC ================
-                # # calculate costs
+                #  # calculate costs
                 # costs = self.district.calc_connection_costs()['total']
 
-                # # check if costs are better
+                #  # check if costs are better
                 # if costs < min_costs:
-                #     # save new minimum value
+                # #     save new minimum value
                 #     min_costs = costs
 
 # ================ CODE FOR LONGEST CABLE HEURISTIC =============
-                # calculate longest cable
+                # # calculate longest cable
                 longest_connection_dist = self.get_longest_connection(self.district.connections)
 
                 # check if costs are better
                 if longest_connection_dist < min_longest_connection_dist:
                     
-                    # save new minimum value
+                  #  save new minimum value
                     min_longest_connection_dist = longest_connection_dist
 
-                    # save connections in best connections
+                #   save connections in best connections
                     best_connections = {}
                     for key, value in self.district.connections.items():
                         best_connections[key] = copy.copy(value)    
@@ -78,7 +79,7 @@ class ConfigFinder(Algorithm):
                 self.district.connections[key] = copy.copy(value)
             
             # calculate costs of the found configuration
-            found_lengths.append(min_longest_connection_dist)
+            #found_lengths.append(min_longest_connection_dist)
             
             # update capacity for next run
             #print(f"decreasing capacity offset, current found cost: {min_costs}")

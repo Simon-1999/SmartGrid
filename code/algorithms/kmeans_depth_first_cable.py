@@ -1,3 +1,10 @@
+"""Our K-Means DepthFirstLength algorithm performs on a K-Means sorted district. It determines houses to check
+based on a capacity offset. These are removed from the batteries, to create free space to switch houses in.
+The algorithm then does a depth first search for the best configuration based on the shortest maximum cable it can find by
+reassigning all free houses. 
+Pruning is done by selecting the two best options of the five diversions from every branch. 
+"""
+
 import copy
 from .algorithm import Algorithm
 
@@ -5,9 +12,44 @@ CAPACITY_OFFSET = 300
 
 class DepthFirstLength(Algorithm):
     """
-    A Depth First algorithm that builds a 
+    Does a depth first search for the best district based on the maximum longest cable it finds by reassigning
+    houses that are on the border of formed clusters. 
+
+    Methods
+    ----------
+    run()
+
+    get_next_state()
+
+    build_children(connections, house)
+
+    check_solution()
+
+    remove_connections(connections)
+
+    calc_battery_connections_costs(connections, battery)
+
+    calc_connection_costs(connections)
+
+    get_longest_connection(connections)
+
+    get_connection_len(battery, house)
+
+    add_best_children(self,connections, children, n)
+
     """
+
     def __init__(self, district, clusters, n):
+        """Parameters
+        ----------
+        district : District object
+
+        clusters : list
+            Formed clusters in the district
+
+        n : int
+            Amount of branches to prune 
+        """
         self.district = district
         self.connections = self.remove_connections(self.district.connections)
         self.states = [copy.copy(self.connections)]
@@ -19,55 +61,6 @@ class DepthFirstLength(Algorithm):
         self.iterations = 0
         self.n = n
         self.process = []
-
-    def get_next_state(self):
-        """
-        Get next state from the back of the stack
-        """
-
-        return self.states.pop()
-
-    def build_children(self, connections, house):
-        """
-        Creates all possible child-states and adds them to the list of states.
-        """
-
-        # retrieves all free batteries the house can connect to
-        batteries = self.district.get_possible_batteries(house)
-
-        children = []
-        # add an instance to the stack with each possible battery connection
-        for battery in batteries:
-            
-            children.append([battery, house])
-            
-        self.add_best_children(connections, children, self.n)
-        
-    
-    def check_solution(self, new_connections):
-        """
-        Checks and accepts better solutions than the current solution.
-        """
-        #print("solution")
-
-        new_connection = self.get_longest_connection(new_connections)
-        #print(new_connection)
-        old_connection = self.longest_connection
-
-        # update the cost if the district total is less
-        if new_connection < old_connection:
-            self.best_solution = new_connections
-            self.longest_connection = new_connection
-            total = self.calc_connection_costs(new_connections)
-
-            # save the process
-            solution = {"iter": self.iterations, "best_total": total, "longest_connection": self.longest_connection}
-            self.process.append(solution)
-            
-            print(self.iterations)
-            print(len(self.states))
-            print(f"longest connection: {self.longest_connection}")
-            print(f"New best value: {total}")
 
     def run(self):
         """
@@ -94,6 +87,59 @@ class DepthFirstLength(Algorithm):
             self.iterations += 1
         # Update the input district with the best result found
         self.connections = self.best_solution
+    
+    def get_next_state(self):
+        """Get next state from the top of the stack.
+        """
+
+        return self.states.pop()
+
+    def build_children(self, connections, house):
+        """Creates all possible child-states and adds them to the list of states.
+
+        Parameters
+        ----------
+        connections : dict ?????
+
+        house : House object
+            House to build children for based on connection possibilities
+        """
+
+        # retrieves all free batteries the house can connect to
+        batteries = self.district.get_possible_batteries(house)
+
+        children = []
+        # add an instance to the stack with each possible battery connection
+        for battery in batteries:
+            
+            children.append([battery, house])
+            
+        self.add_best_children(connections, children, self.n)
+        
+    
+    def check_solution(self, new_connections):
+        """Checks and accepts better solutions into the state stack than the current solution.
+        """
+        
+
+        new_connection = self.get_longest_connection(new_connections)
+        #print(new_connection)
+        old_connection = self.longest_connection
+
+        # update the cost if the district total is less
+        if new_connection < old_connection:
+            self.best_solution = new_connections
+            self.longest_connection = new_connection
+            total = self.calc_connection_costs(new_connections)
+
+            # save the process
+            solution = {"iter": self.iterations, "best_total": total, "longest_connection": self.longest_connection}
+            self.process.append(solution)
+            
+            print(self.iterations)
+            print(len(self.states))
+            print(f"longest connection: {self.longest_connection}")
+            print(f"New best value: {total}")
 
     
     def remove_connections(self, connections):
@@ -144,6 +190,8 @@ class DepthFirstLength(Algorithm):
         return costs
 
     def get_longest_connection(self, connections):
+        """Returns the maximum distance in a cluster.
+        """
 
         max_dist = 0
 
