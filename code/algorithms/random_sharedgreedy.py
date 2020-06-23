@@ -1,3 +1,12 @@
+"""The SharedGreedy algorithm uses a configuration that has already been formed for a district, and 
+places cables in a greedy manner. It actually runs the SharedGreedy algorithm multiple times, to check for any 
+cables that can be improved after all houses have been connected. 
+The batteries themselves are used as the first 'connectpoints', and the houses get a cable to them one by one
+after being sorted on their distance from the battery. When a house's path is added, all the pathway points
+are added as connectpoints, and the next house connects to the closest connectpoint. This way, all houses end 
+up connected to their battery. 
+"""
+
 import copy
 import random
 import matplotlib.pyplot as plt
@@ -8,8 +17,31 @@ from .algorithm import Algorithm
 ITERATIONS = 3000
 
 class RandomSharedGreedy(Algorithm):
+    """Connects houses to their battery in a greedy way. The closest house is added directly to the battery, then
+    after that the next house is connected to the closest existing 'connectpoint', i.e. the closest existing cable
+    or the battery itself when that's closer. 
+
+    Methods
+    ----------
+    run()
+        Runs the SharedGreedy algorithm
+
+    get_nearest_connectpoint(battery, house)
+        Gets nearest connectpoint for a house 
+
+    get_random_path(start_location, end_location)
+        Creates a shortest Manhattan path between two points in a random x,y order
+
+    init_connectpoints()
+        Initializes the batteries of the district as the first connectpoints
+    """
 
     def __init__(self, district):
+        """Parameters
+        ----------
+        district : District object
+            A district with a prior configuration
+        """
 
         self.district = district
         self.free_houses = []
@@ -21,6 +53,12 @@ class RandomSharedGreedy(Algorithm):
         self.connectpoints = self.init_connectpoints()
 
     def run(self):
+        """Runs the RandomSharedGreedy algorithm
+
+        Returns
+        ----------
+        District object
+        """
 
         # prompt the user for iterations
         iterations = self.prompt_iterations(default=ITERATIONS)
@@ -43,7 +81,7 @@ class RandomSharedGreedy(Algorithm):
                     connectpoint = self.get_nearest_connectpoint(battery, house)   
 
                     # make cable path
-                    path = self.get_cable_path(house.location, connectpoint) 
+                    path = self.get_random_path(house.location, connectpoint) 
                     self.district.cables[house.id] = path
 
                     # add path to connectpoints
@@ -62,16 +100,34 @@ class RandomSharedGreedy(Algorithm):
             # reset the district cables and connectpoints
             self.district.reset_cables()
             self.connectpoints = self.init_connectpoints()
-            
                     
         return self.best_district
 
+
     def get_nearest_connectpoint(self, battery, house):
+        """Finds the nearest connectpoint for a house to connect to. 
+        """
 
         return min(self.connectpoints[battery.id], key=lambda \
             location: self.calc_dist(location, house.location))
 
-    def get_cable_path(self, start_location, end_location):
+
+    def get_random_path(self, start_location, end_location):
+        """Collects necessary x- and y-movements between two locations to create a path with
+        the shortest Manhattan distance. The movements are then shuffled to create a random
+        order. 
+
+        Parameters
+        ----------
+        start_location : tuple
+
+        end_location : tuple
+
+        Returns
+        ----------
+        list
+            The formed path, a list of tuples as representation
+        """
 
         # unpack location
         current_x, current_y = start_location
@@ -117,7 +173,10 @@ class RandomSharedGreedy(Algorithm):
 
         return path 
 
+
     def init_connectpoints(self):
+        """Initializes the batteries in a district as the first connectpoints. 
+        """
 
         connectpoints = {}
 

@@ -12,32 +12,46 @@ CAPACITY_OFFSET = 300
 N = 2
 
 class DepthFirstLength(Algorithm):
-    """
-    Does a depth first search for the best district based on the maximum longest cable it finds by reassigning
-    houses that are on the border of formed clusters. 
+    """A Depth First algorithm that selects houses that are close to clusters other than their own, and
+    disconnects those from their batteries until the capacity offset is reached. It then performs a depth first
+    search for the best configuration. Pruning is done by selecting the two best options of the five diversions from 
+    every branch.
+
+    Parameters
+    ----------
+    district : District object
 
     Methods
     ----------
     run()
+        Runs the algorithm.
 
     get_next_state()
+        Get next state from the back of the stack.
 
     build_children(connections, house)
+        Creates all possible child-states and adds them to the list of states.
 
-    check_solution()
+    check_solution(new_connections)
+        Checks for the best solution and accepts that state.
 
     remove_connections(connections)
+        Remove connections from a district
 
-    calc_battery_connections_costs(connections, battery)
+    calc_battery_connection_costs(connections, battery)
+        Calculates costs of connection to one battery.
 
     calc_connection_costs(connections)
-
+        Calculates the total cost of the district.
+    
     get_longest_connection(connections)
+        Returns the maximum connection distance in a cluster.
 
     get_connection_len(battery, house)
+        Calculates distance of a house to a cluster centroid.
 
-    add_best_children(self,connections, children, n)
-
+    add_best_children(connections, children, n)
+        Adds the pruned child states to the stack.
     """
 
     def __init__(self, district, clusters):
@@ -49,7 +63,7 @@ class DepthFirstLength(Algorithm):
             Formed clusters in the district
 
         """
-        self.district = copy.deepcopy(district)
+        self.district = district
         self.connections = self.remove_connections(self.district.connections)
         self.states = [copy.copy(self.connections)]
         self.clusters = clusters
@@ -60,8 +74,12 @@ class DepthFirstLength(Algorithm):
         self.iterations = 0
 
     def run(self):
-        """
-        Runs the algorithm untill all possible states are visited.
+        """Runs the algorithm untill all possible states are visited.
+
+        Returns
+        ----------
+        District object
+            Best found configuration
         """
     
         while self.states:
@@ -90,7 +108,11 @@ class DepthFirstLength(Algorithm):
         return self.district
     
     def get_next_state(self):
-        """Get next state from the top of the stack.
+        """Get next state from the back of the stack.
+
+        Returns
+        ----------
+        dict
         """
 
         return self.states.pop()
@@ -100,10 +122,9 @@ class DepthFirstLength(Algorithm):
 
         Parameters
         ----------
-        connections : dict ?????
+        connections : dict
 
         house : House object
-            House to build children for based on connection possibilities
         """
 
         # retrieves all free batteries the house can connect to
@@ -119,9 +140,13 @@ class DepthFirstLength(Algorithm):
         
     
     def check_solution(self, new_connections):
-        """Checks and accepts better solutions into the state stack than the current solution.
+        """Checks and accepts better solutions than the current solution.
+
+        Parameters
+        ----------
+        new_connections : dict
+
         """
-        
 
         new_connection = self.get_longest_connection(new_connections)
         old_connection = self.longest_connection
@@ -137,6 +162,16 @@ class DepthFirstLength(Algorithm):
 
     
     def remove_connections(self, connections):
+        """Removes connections from a district.
+
+        Parameters
+        ----------
+        connections : dict
+
+        Returns
+        ----------
+        dict
+        """
 
         # remove connections
         for battery in self.district.batteries:
@@ -167,8 +202,17 @@ class DepthFirstLength(Algorithm):
         return costs
 
     def calc_connection_costs(self, connections):
-        """
-        Calculates the total cost of the district
+        """Calculates costs of connection to one battery.
+
+        Parameters
+        ----------
+        connections : dict
+
+        battery : Battery object
+
+        Returns
+        ----------
+        float
         """
 
         connections_cost = 0
@@ -183,7 +227,15 @@ class DepthFirstLength(Algorithm):
         return costs
 
     def get_longest_connection(self, connections):
-        """Returns the maximum distance in a cluster.
+        """Returns the maximum connection distance in a cluster.
+
+        Parameters
+        ----------
+        connections : dict
+
+        Returns
+        ----------
+        float
         """
 
         max_dist = 0
@@ -202,7 +254,20 @@ class DepthFirstLength(Algorithm):
 
         return max_dist
 
+
     def get_connection_len(self, battery, house):
+        """Calculates distance of a house to a cluster centroid of a certain batteries' cluster
+
+        Parameters
+        ----------
+        battery : Battery object
+
+        house : House object
+
+        Returns
+        ----------
+        float
+        """
 
         cluster = self.clusters[battery.id]
         centroid = cluster["centroid"]
@@ -210,6 +275,18 @@ class DepthFirstLength(Algorithm):
         return self.calc_dist(centroid, house.location)
 
     def add_best_children(self,connections, children, n):
+        """Adds the pruned child states to the stack.
+
+        Parameters
+        ----------
+        connections : dict
+
+        children : list
+            New district states to evaluate
+        
+        n : int
+            Amount of pruning to do
+        """
         children.sort(key=lambda temp: self.get_connection_len(temp[0], temp[1]))
 
         for battery, house in children[:n]:
@@ -225,3 +302,5 @@ class DepthFirstLength(Algorithm):
     
 
                 
+
+        
