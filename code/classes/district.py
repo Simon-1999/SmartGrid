@@ -7,7 +7,6 @@ import csv
 
 from .battery import Battery
 from .house import House
-from .final_cable import Cable
 
 BATTERY_COST = 5000
 
@@ -238,6 +237,27 @@ class District():
                 return house
         
         return None
+
+    def get_empty_houses(self):
+        """Returns houses hat are not yet connected, if there is one.
+
+        Returns
+        ----------
+        list
+        """
+
+        connected_houses = []
+        empty_houses = []
+
+        for values in self.connections.values():
+            connected_houses += values
+
+     
+        for house in self.houses:
+            if house not in connected_houses:
+                empty_houses.append(house)
+        
+        return empty_houses
 
 
     def get_batteries(self):
