@@ -1,8 +1,2 @@
-csv
-copy
-itertools
-json
-numpy
-matplotlib
-random
-time
+numpy==1.18.4
+matplotlib==3.2.1
