@@ -1,29 +1,82 @@
-"""
-"""
-
 import copy
 import random
-import matplotlib.pyplot as plt
-import numpy
 
 from .algorithm import Algorithm
+
+"""This algorithm performs on a K-Means sorted district. It determines houses to checkbased on a capacity offset. 
+These are removed from the batteries, to create free space to switch houses in.
+The algorithm then randomly connects the free houses to the battery and calculates the total district cost.
+It does this over multiple iterations and eventually returns the district with the cheapest configuration.
+"""
 
 
 CAPACITY_OFFSET = 350
 ITERATIONS = 50000 
 
 class ConfigFinderCosts(Algorithm):
+    """Explores different district configuratiom by removing a set of houses that are on the border of the formed clusters
+    and randomly reassigns them to batteries over multiple iterations. Returns the configuration with the lowest cost.
+
+    Attributes
+    ----------
+    district: District object
+        A district clustered and sorted through a kmeans algorithm
+
+    clusters: list
+        Dictionaries with cluster centroid locations,
+        lists of houses in the cluster 
+        and the Battery objects
+
+    free_houses: list
+        House objects without connections
+
+    min_costs: float
+        Lowest configuration cost found
+    
+    best_connections: dict
+        Found configuration with the lowest cost
+
+    Methods
+    ----------
+
+    run()
+        Runs the algorithm
+
+    nearest_free_battery(house)
+        Finds battery belonging the closest cluster to a house
+
+    remove_connections(CAPACITY_OFFSET)
+        Removes connections with a specified capacity offset
+
+    add_connections()
+        Randomly assigns connections between free houses and batteries
+
+    """
 
     def __init__(self, district, clusters):
+        """Parameters
+        ----------
+        district : District object
+            District to perform actions on
+        
+        clusters : list
+            information about the the clusters
+        """
 
         self.district = district
         self.clusters = clusters
         self.free_houses = []
-        self.iterations = 0
         self.min_costs = float('inf')
         self.best_connections = copy.copy(self.district.connections)   
 
     def run(self):
+        """Runs the ConfigFinderCosts algorithm
+
+        Returns
+        ----------
+        District object
+            Cheapest district configuration found over the iterations
+        """
         
         # prompt the user for iterations
         iterations = self.prompt_iterations(default=ITERATIONS)
@@ -34,9 +87,6 @@ class ConfigFinderCosts(Algorithm):
             init_connections[key] = copy.copy(value)
 
         for i in range(iterations):
-
-            # increment iterations
-            self.iterations += 1
             
             # reset free houses
             self.free_houses = []
@@ -73,6 +123,17 @@ class ConfigFinderCosts(Algorithm):
         return self.district        
 
     def nearest_free_battery(self, house):
+        """
+        Calculates which battery belongs to the cluster nearest to the given house
+
+        Paramaters
+        ----------
+        house : House object
+
+        Returns
+        ----------
+        Battery object
+        """
 
         # sort clusters on distance from house
         self.clusters.sort(key=lambda cluster: self.calc_dist(cluster['centroid'], house.location))
@@ -87,6 +148,14 @@ class ConfigFinderCosts(Algorithm):
 
 
     def remove_connections(self, CAPACITY_OFFSET):
+        """ Subtracts a specified offset from each battery and removes house connections from that battery 
+        untill the offset is reached. Removed houses are stored in the free houses list.
+
+        Paramaters
+        ----------
+        CAPACITY_OFFSET : int
+        
+        """
 
         # remove connections
         for battery in self.district.batteries:
@@ -100,6 +169,9 @@ class ConfigFinderCosts(Algorithm):
                 self.free_houses.append(removed_house)
 
     def add_connections(self):
+        """ Randomly shuffles the list of free houses and adds connections between the free houses
+        and the nearest batteries with enough capacity.
+        """
 
         random.shuffle(self.free_houses)
 
