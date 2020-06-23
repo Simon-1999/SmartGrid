@@ -423,8 +423,8 @@ class District():
 
     def get_house_battery(self, house):
 
-        for battery in self.district.batteries:
-            houses = self.district.connections[battery.id]
+        for battery in self.batteries:
+            houses = self.connections[battery.id]
 
             if house in houses:
                 return battery
@@ -438,8 +438,8 @@ class District():
             print(f"| {'configuration:':<18} {'valid':>12} |")
         else:
             print(f"| {'configuration:':<18} {'invalid':>12} |")
-        costs = district.calc_cables_costs()
-        print(f"| {'connections:':<18} {costs['connections']:>12} |")
+        costs = self.calc_cables_costs()
+        print(f"| {'cables:':<18} {costs['cables']:>12} |")
         print(f"| {'batteries:':<18} {costs['batteries']:>12} |")
         print(f"| {'total:':<18} {costs['total']:>12} |")
         print("+---------------------------------+")  
