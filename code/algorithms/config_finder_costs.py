@@ -57,6 +57,7 @@ class ConfigFinderCosts(Algorithm):
                 # check if costs are better
                 if costs < self.min_costs:
                     #save new minimum value
+                    print(costs)
                     self.min_costs = costs
                     self.best_connections = self.district.connections
 
@@ -71,6 +72,8 @@ class ConfigFinderCosts(Algorithm):
 
         # set best connections
         self.district.set_connections(self.best_connections)
+
+        print(self.district.calc_connection_costs())
 
         return self.district        
 
