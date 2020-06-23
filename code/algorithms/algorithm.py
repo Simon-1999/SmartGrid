@@ -30,6 +30,8 @@ class Algorithm():
     get_path(start_location, end_location)
         Returns the pathway of a cable
 
+    prompt_iterations(iterations)
+        Returns number of iterations from user input
     """
 
     def __init__(self, district):
@@ -124,5 +126,21 @@ class Algorithm():
             path.append((current_x, current_y))
 
         return path    
+  
+    def prompt_iterations(self, default):
+        """ 
+        Returns number of iterations from user input
 
-        
+        Parameters
+        ----------
+        default: int
+        """  
+
+        message = f"Set iterations, for default value {default} press enter\n"
+
+        answer = input(message)
+
+        if answer == '':
+            return default  
+
+        return int(answer)  
