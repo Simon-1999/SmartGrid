@@ -33,6 +33,7 @@ class KmeansSorting(Algorithm):
         self.clusters = clusters
         self.sort_district = district
 
+
     def run(self):
         """Modifies a Kmeans-distributed district to have houses sorted based on their distance
         to other districts 
@@ -52,9 +53,8 @@ class KmeansSorting(Algorithm):
             self.sort_district.connections[battery.id] = houses_sorted
             # print(houses_sorted)
         
-        print("CREATED SORTED DISTRICT")
-
         return self.sort_district
+    
     
     def dist_other_house(self, house, clusters):
         """Returns distance of a house to the closest house of another cluster.
