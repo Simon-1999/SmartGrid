@@ -119,7 +119,7 @@ class GroupSwap(Algorithm):
         """
 
         # random shuffle houses list
-        random.shuffle(self.district.get_houses())
+        random.shuffle(self.district.houses)
 
         # get empty houses
         empty_houses = self.district.get_empty_houses()
