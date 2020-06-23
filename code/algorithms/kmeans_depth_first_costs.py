@@ -64,11 +64,9 @@ class DepthFirstCosts(Algorithm):
         if new_total <= old_total:
             self.best_solution = new_connections
             self.best_total = new_total
-            print(self.iterations)
-            print(len(self.states))
             solution = {"iter": self.iterations, "best_total": self.best_total}
             self.process.append(solution)
-            print(f"New best value: {self.best_total}")
+
 
     def run(self):
         """
@@ -92,9 +90,16 @@ class DepthFirstCosts(Algorithm):
                 # continue looking for better districts.
                 self.check_solution(new_connections)
 
-            self.iterations += 1
-        # Update the input district with the best result found
-        self.connections = self.best_solution
+            self.iterations += 
+            
+        # update the input district with the best result found
+        self.district.connections = self.best_solution
+
+        # set the district cables
+        self.set_cables(self.district)
+
+        return self.district
+    
 
 
     def get_best_child(self, children, n):

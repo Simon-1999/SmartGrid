@@ -34,6 +34,7 @@ class Randomize(Algorithm):
 
         self.print_result(self.district)
 
+        # set district cables
         self.set_district_cables(self.district)
 
         print("randomize done")

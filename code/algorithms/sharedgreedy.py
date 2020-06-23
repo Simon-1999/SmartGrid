@@ -56,6 +56,8 @@ class SharedGreedy(Algorithm):
         District object
         """
 
+        self.district.reset_cables()
+
         # loop through batteries
         for battery in self.district.batteries:
 
@@ -77,9 +79,6 @@ class SharedGreedy(Algorithm):
                 # add path to connectpoints
                 for point in path:
                     self.connectpoints[battery.id].append(point)  
-                        
-        # plot cables
-        self.plot_cables(self.district)
 
         print("SharedGreedy done ")
         return self.district
@@ -164,44 +163,3 @@ class SharedGreedy(Algorithm):
             connectpoints[battery.id] = [battery.location]
 
         return connectpoints
-
-
-    def plot_cables(self, district):
-        """Plots a district with its connections. 
-
-        Parameters
-        ----------
-        district : District object
-        """
-
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1) 
-        plt.title(f'District{district.id}')
-
-        color = {0: "blue", 1:"red" ,2:"yellow",3:"cyan", 4:"magenta"} 
-
-        # loop through batteries
-        for battery in district.batteries:
-            x, y = battery.location
-            plt.plot(x, y, 'ks', label = f'battery{battery.id}', color=color[battery.id], markersize=10)
-
-            for house in district.connections[battery.id]:             
-                x, y = house.location
-                plt.plot(x, y, 'p', color=color[battery.id], markersize=7, alpha=0.5)
-
-                path_x = []
-                path_y = []
-
-                for path in district.cables[house.id]:
-                    x, y = path
-                    path_x.append(x)
-                    path_y.append(y)
-
-                plt.plot(path_x, path_y, '-', color=color[battery.id], alpha=0.3)
-
-        # plot district  
-        ax.set_xticks(numpy.arange(0, 51, 1), minor=True)
-        ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
-        ax.grid(which='minor', alpha=0.2)
-        plt.legend()
-        plt.show()

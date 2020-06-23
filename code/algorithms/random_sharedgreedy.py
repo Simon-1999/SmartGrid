@@ -23,6 +23,8 @@ class SharedGreedy(Algorithm):
 
         print("SharedGreedy running... ")
 
+        self.district.reset_cables()
+
         for i in range(3000):
             # loop through batteries
             for battery in self.district.batteries:
@@ -55,20 +57,12 @@ class SharedGreedy(Algorithm):
                 self.best_district = copy.deepcopy(self.district)
                 self.process["iterations"].append(self.iterations)
                 self.process["best_total"].append(self.best_total)
-                print(self.iterations)
-                print(self.best_total)
             
             # reset the district cables and connectpoints
             self.district.reset_cables()
             self.connectpoints = self.init_connectpoints()
             
-                        
-        # plot cables
-        self.plot_cables(self.best_district)
-
-        print("SharedGreedy done ")
-        print(self.iterations)
-        print(self.best_total)
+                    
         return self.best_district, self.process
 
     def get_nearest_connectpoint(self, battery, house):
@@ -131,37 +125,3 @@ class SharedGreedy(Algorithm):
             connectpoints[battery.id] = [battery.location]
 
         return connectpoints
-
-    def plot_cables(self, district):
-
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1) 
-        plt.title(f'District{district.id}')
-
-        color = {0: "blue", 1:"red" ,2:"yellow",3:"cyan", 4:"magenta"} 
-
-        # loop through batteries
-        for battery in district.batteries:
-            x, y = battery.location
-            plt.plot(x, y, 'ks', label = f'battery{battery.id}', color=color[battery.id], markersize=10)
-
-            for house in district.connections[battery.id]:             
-                x, y = house.location
-                plt.plot(x, y, 'p', color=color[battery.id], markersize=7, alpha=0.5)
-
-                path_x = []
-                path_y = []
-
-                for path in district.cables[house.id]:
-                    x, y = path
-                    path_x.append(x)
-                    path_y.append(y)
-
-                plt.plot(path_x, path_y, '-', color=color[battery.id], alpha=0.3)
-
-        # plot district  
-        ax.set_xticks(numpy.arange(0, 51, 1), minor=True)
-        ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
-        ax.grid(which='minor', alpha=0.2)
-        plt.legend()
-        plt.show()

@@ -10,92 +10,118 @@ class SimpleSwap(Algorithm):
     """
 
     def __init__(self, district):
-        self.district_copy = copy.deepcopy(self.district)
+        self.district_copy = copy.deepcopy(district)
+        self.iterations = 0
 
     
     def run(self):
 
-        print()
         print("========== optimizing... (simple_swap algorithm) ===========")
-        print()
-
+        
         # sort connections based on length
-        sorted_connections = sort_connections(self.district_copy)
+        sorted_connections = self.sort_connections()
+        
         i = 0
     
-    while i < len(sorted_cables): # and swapcount is not 0
-        time.sleep(0.2)
-        current_cable = sorted_cables[i]
-        target_house = find_swap(current_cable, copied_district)
+        while i < len(sorted_connections): # and swapcount is not 0
+            self.iterations += 1
+            longest_connection = sorted_connections[i]
+            swap_connection = self.find_swap(longest_connection)
         
-        if not target_house:
-            i += 1
-            print(f"list position: {i}")
-            continue
+            if not swap_connection:
+                i += 1
+                #print(f"list position: {i}")
+                continue
         
-        swap(current_cable.house, target_house, copied_district)
-        i = 0
-        sorted_cables = sort_cables(sorted_cables)
+            self.swap(longest_connection, swap_connection)
+            i = 0
+            sorted_connections = self.sort_connections()
+
+        self.print_result(self.district_copy)
+
+        # set district cables
+        self.set_district_cables(self.district_copy)
+        return self.district_copy
+        
+        
+    def sort_connections(self):
+        """
+        Creates sorted list of the current battery house connections sorted by length
+        """
+        # create battery house list
+        # [[BATTERY, HOUSE], [BATTERY, HOUSE], etc.]
+        connection_list =[]
+        for battery in self.district_copy.batteries:
+            houses = self.district_copy.connections[battery.id]
+
+            for house in houses:
+                connection_list.append([battery, house])
+
+        return sorted(connection_list, key=lambda connection: self.calc_dist(connection[1].location, connection[0].location), reverse=True)
+
+    def find_swap(self, connection):
+        """
+        Looks for a house with a beneficial swap possibility
+        """
+        current_battery, current_house = connection
+        current_dist = self.calc_dist(current_house.location, current_battery.location)
+
+        # capacity left in the battery
+        remaining_capacity = current_battery.capacity - (self.district_copy.get_usage(current_battery) - current_house.output)
+
+        best_length = float('inf')
+        best_connection = None
+
+        for new_house in self.district_copy.houses:
+
+            # check if the swap is allowed regarding output, else move to next house
+            if new_house.output > remaining_capacity:
+                continue
+
+            new_battery = self.get_house_battery(new_house)
+
+            if current_house.output > new_battery.capacity - (self.district_copy.get_usage(new_battery) - new_house.output):
+                continue
+        
+            # check if the swap would lead to less cables 
+            # (CURRENT DISTANCE + SELECT DISTANCE)
+            current_total_dist = current_dist + self.calc_dist(new_house.location, new_battery.location)
+            # NEW CONNECTION DISTANCES combined
+            new_total_dist = self.calc_dist(current_house.location, new_battery.location) + self.calc_dist(new_house.location, current_battery.location)
+
+            # check if it's the best swapping option
+            #print(f"New total dist:{new_total_dist}")
+            #print(f"Current total dist:{current_total_dist}")
+            #print(f"best_length: {best_length}")
+            if (new_total_dist < current_total_dist) and (new_total_dist < best_length):
+                best_length = new_total_dist
+                best_connection = [new_battery, new_house]
     
-    return copied_district
+        # return best swapping option
+        return best_connection
+
+
+    def swap(self, current_connection, swap_connection):
+        """
+        Swaps batteries between two houses, and creates new cables
+        """
+        current_battery, current_house = current_connection
+        swap_battery, swap_house = swap_connection
+
+        # remove current connections
+        self.district_copy.connections[current_battery.id].remove(current_house)
+        self.district_copy.connections[swap_battery.id].remove(swap_house)
+
+        # make new connections
+        self.district_copy.connections[current_battery.id].append(swap_house)
+        self.district_copy.connections[swap_battery.id].append(current_house)
         
         
-def sort_cables(cables):
-    """
-    Returns sorted list of cables
-    """
-    # sort list based on length
-    return sorted(cables, key=lambda cable: cable.calc_length(), reverse=True)
-
-def find_swap(cable, district):
-    """
-    Looks for a house with a beneficial swap possibility
-    """
-    houses = district.houses
-    left_own_battery = cable.battery.capacity - cable.battery.usage
-    new_best_length = float('inf')
-    might_swap_house = None
-
-    for house in houses:
-        # check if the swap is allowed regarding output, else move to next house
-        if house.output > cable.house.output + left_own_battery:
-            continue
-        
-        # check if the swap would lead to less cables
-        current_total_cables = man_dist(house.location, house.get_battery().location) + man_dist(cable.house.location, cable.battery.location)
-        new_total_cables = man_dist(house.location, cable.battery.location) + man_dist(house.get_battery().location, cable.house.location)
-
-        # check if it's the best swapping option
-        if (new_total_cables <= current_total_cables) and (new_total_cables < new_best_length):
-            new_best_length = new_total_cables
-            might_swap_house = house
     
-    # return best swapping option
-    return might_swap_house
+    def get_house_battery(self, house):
 
-
-def swap(house1, house2, district):
-    """
-    Swaps batteries between two houses, and creates new cables
-    """
-    battery1 = house1.cable.battery
-    battery2 = house2.cable.battery
-
-    # remove old cables
-    district.remove_cable(house1.cable)
-    district.remove_cable(house2.cable)
-
-    # add new cables
-    district.add_cable(battery2, house1)
-    district.add_cable(battery1, house2)
-
-    
-
-def man_dist(point1, point2):
-    """
-    Calculates Manhattan distance between two grid points
-    """
-    x1, y1 = point1
-    x2, y2 = point2
-
-    return abs(x1 - x2) + abs(y1 - y2)
+        for battery in self.district_copy.batteries:
+                houses = self.district_copy.connections[battery.id]
+                
+                if house in houses:
+                    return battery

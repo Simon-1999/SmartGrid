@@ -8,7 +8,10 @@ import numpy
 
 from .algorithm import Algorithm
 
-class ConfigFinder(Algorithm):
+CAPACITY_OFFSET = 350
+ITERATIONS = 50000
+
+class ConfigFinderLength(Algorithm):
 
     def __init__(self, district, clusters):
 
@@ -16,21 +19,17 @@ class ConfigFinder(Algorithm):
         self.clusters = clusters
         self.free_houses = []
         self.iterations = 0
+        self.min_longest_connection_dist = float('inf')
+        self.best_connections = copy.copy(self.district.connections) 
 
     def run(self):
         
         print("ConfigFinder running...")
 
-        CAPACITY_OFFSET = 350
-        ITERATIONS = 50000
-        min_costs = float('inf')
-        min_longest_connection_dist = float('inf')
-        best_connections = copy.copy(self.district.connections)   
-
-        # set current_connections
-        connections = {}
+        # save initial connections
+        init_connections = {}
         for key, value in self.district.connections.items():
-            connections[key] = copy.copy(value)
+            init_connections[key] = copy.copy(value)
 
 
         for i in range(ITERATIONS):
@@ -50,53 +49,31 @@ class ConfigFinder(Algorithm):
             # check if solution is valid
             if self.district.all_houses_connected():
 
-# ================= CODE FOR COST HEURISTIC ================
-                #  # calculate costs
-                # costs = self.district.calc_connection_costs()['total']
 
-                #  # check if costs are better
-                # if costs < min_costs:
-                # #     save new minimum value
-                #     min_costs = costs
-
-# ================ CODE FOR LONGEST CABLE HEURISTIC =============
                 # # calculate longest cable
                 longest_connection_dist = self.get_longest_connection(self.district.connections)
 
                 # check if costs are better
-                if longest_connection_dist < min_longest_connection_dist:
+                if longest_connection_dist < self.min_longest_connection_dist:
                     
                   #  save new minimum value
-                    min_longest_connection_dist = longest_connection_dist
-
-                #   save connections in best connections
-                    best_connections = {}
-                    for key, value in self.district.connections.items():
-                        best_connections[key] = copy.copy(value)    
-
-            # reset district connections
-            for key, value in connections.items():
-                self.district.connections[key] = copy.copy(value)
+                    self.min_longest_connection_dist = longest_connection_dist
+                    self.best_connections = self.district.connections  
             
-            # calculate costs of the found configuration
-            #found_lengths.append(min_longest_connection_dist)
-            
-            # update capacity for next run
-            #print(f"decreasing capacity offset, current found cost: {min_costs}")
-            #print(f"moving to iteration {i}")
+            # reset the initial connections
+            connections = {}
+            for key, value in init_connections.items():
+                connections[key] = copy.copy(value)
+
+            self.district.connections = connections
 
         # set best connections
-        self.district.connections = best_connections
+        self.district.connections = self.best_connections
 
-        # results
-        #self.plot_connections(self.district, self.free_houses)
         self.print_result(self.district)
 
-        # plot iterations vs. costs to visualize the decrease speed
-        #self.plot_iterations_data(ITERATIONS, found_lengths)
-
-        # plot capacity offset vs. final costs
-        #self.plot_offset_foundcosts(offsets, found_costs)
+        # set the district cables
+        self.set_cables(self.district)
 
         return self.district        
 
@@ -180,52 +157,4 @@ class ConfigFinder(Algorithm):
                     max_dist = dist
 
         return max_dist
-                
-    def plot_connections(self, district, free_houses):
-
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1) 
-        plt.title(f'District{district.id}')
-
-        color = {0: "blue", 1:"red" ,2:"yellow",3:"cyan", 4:"magenta"} 
-
-        # loop through batteries
-        for battery in district.batteries:
-            x, y = battery.location
-            plt.plot(x, y, 'ks', label = f'battery{battery.id}', color=color[battery.id], markersize=10)
-
-            for house in district.connections[battery.id]:             
-                x, y = house.location
-                plt.plot(x, y, 'p', color=color[battery.id], markersize=7, alpha=0.5)
-
-        for free_house in free_houses:
-            x, y = free_house.location
-            plt.plot(x, y, 'kp', markersize=15, alpha=0.1)
-
-        # plot district  
-        ax.set_xticks(numpy.arange(0, 51, 1), minor=True)
-        ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
-        ax.grid(which='minor', alpha=0.2)
-        plt.legend()
-        plt.show()
-
-
-    def plot_offset_foundcosts(self, offsets, found_costs):
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1)
-        plt.title(f"Costs of district after changing capacity offsets")
-
-        ax.plot(offsets, found_costs)
-        plt.show()
-
-    def plot_iterations_data(self, iters, data):
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1)
-        plt.title(f"Longest connection after each iter of ConfigFinder")
-
-        ax.plot(list(range(iters)), data)
-
-        axes = plt.gca()
-        axes.set_ylim([25,50])
-
-        plt.show()
+ 

@@ -38,6 +38,9 @@ class LowerBound(Algorithm):
         # print results
         self.print_result(self.district)
 
+        # set district cables
+        self.set_district_cables(self.district)
+
         # return district
         return self.district
 

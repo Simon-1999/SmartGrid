@@ -88,6 +88,8 @@ class Algorithm():
         ----------
         district : District object
         """ 
+        # reset cables
+        self.district.reset_cables()
 
         for battery in district.batteries:
             

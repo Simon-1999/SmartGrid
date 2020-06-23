@@ -85,8 +85,14 @@ class DepthFirstLength(Algorithm):
                 self.check_solution(new_connections)
 
             self.iterations += 1
-        # Update the input district with the best result found
-        self.connections = self.best_solution
+
+        # update the input district with the best result found
+        self.district.connections = self.best_solution
+
+        # set the district cables
+        self.set_cables(self.district)
+
+        return self.district
     
     def get_next_state(self):
         """Get next state from the top of the stack.
