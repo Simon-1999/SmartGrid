@@ -93,7 +93,7 @@ These are algorithms for a district where houses *can* share cables. We aim to u
 
 **SharedGreedy** initializes a district's batteries as so-called *connectpoints*. It then loops through all houses that are assigned to that battery and connects each house to the nearest connectpoint. After a house has a cable that directly or indirectly leads to a battery, the house's path is added to the connectpoints. The next house then connects to the closest connectpoint again. This way houses create a network that connects everything to a battery. 
 
-**RandomSharedGreedy** is actually multiple runs of the **SharedGreedy** algorithm.
+**RandomSharedGreedy** is actually multiple runs of the **SharedGreedy** algorithm. After having performed one run of **SharedGreedy**, it reviews all connections and checks whether a better option has formed after new houses have been connected.
 
 ## Visualization
 
