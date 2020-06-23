@@ -112,11 +112,11 @@ class Interface():
                 'r': {'name': 'Randomized', \
                     'description': 'Randomly shuffles houses list and assign houses to battery untill valid configuration is found', \
                     'class': algorithms.Randomize(district), \
-                    'optimizations': ['s']},
+                    'optimizations': ['s', 'g']},
                 'ro': {'name': 'RandomOptimize', \
                     'description': 'Randomly shuffles houses list and assign house to nearest free battery untill valid configuration is found', \
                     'class': algorithms.RandomOptimize(district), \
-                    'optimizations': ['s']},
+                    'optimizations': ['s', 'g']},
                 'l': {'name': 'Lowerbound', \
                     'description': 'Assign house to nearest battery', \
                     'class': algorithms.LowerBound(district), \
