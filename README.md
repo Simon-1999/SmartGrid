@@ -26,7 +26,14 @@ An interactive interface is started when running the following command:
 
 `python3 main.py`
 
-........UITLEG INTERFACE...........
+An interface is started where a user can run the following steps: 
+- Choose between district 1, 2 or 3
+- Choose if houses can share cables or not
+- Choose inital algorithm
+- Choose optimization
+After every algorithm, the district is plotted and an overview of the result is printed. 
+
+For more details on the algorithms and other code, please reference the separate README.md file in the **/code** folder. 
 
 ## Structure
 
@@ -38,7 +45,8 @@ navigation.
   - **/code/classes**: contains the three representation classes of the SmartGrid district
   - **/code/visualization**: contains code for plotting and writing output
 - **/data**: contains data folders for the districts
-- **/main.py**: code to run the full program in an interactive way, with a possibility to choose which algorithm to use.
+- **/main.py**: code to run the full program in an interactive way by launching the interface. 
+- **/interface.py**: this class provides an interactive environment for the user to choose district properties and algorithms to run
 
 ## Authors
 [Simon van Eeden](mailto:simonveeden@hotmail.com)  
