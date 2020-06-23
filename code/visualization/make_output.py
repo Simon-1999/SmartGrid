@@ -20,14 +20,14 @@ def output_doc(district, shared):
     district_info = {}
     district_info['district'] = district.id
     if shared:
-        district_info['shared-costs'] = district.calc_connection_costs()['total']
+        district_info['shared-costs'] = district.calc_cables_costs()['total']
     else:
-        district_info['own-costs'] = district.calc_connection_costs()['total']
+        district_info['own-costs'] = district.calc_cables_costs()['total']
 
     data.append(district_info)
 
     # loop through every battery in the district
-    for battery in district.get_batteries():
+    for battery in district.batteries:
         battery_data = {}
 
         # create general info for each battery
@@ -45,11 +45,15 @@ def output_doc(district, shared):
 
             house_info['location'] = house.location
             house_info['output'] = house.output
-            house_info['cables'] = district.cables[house.id]
+
+            if house.id in district.cables:
+                house_info['cables'] = district.cables[house.id]
+            else:
+                house_info['cables'] = []
 
             # add house dict to battery
             battery_data['houses'].append(house_info)
 
     # write everything to output file
-    with open("output.json", "w+") as outfile:
+    with open("output/output.json", "w+") as outfile:
         json.dump(data, outfile)

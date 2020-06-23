@@ -18,7 +18,7 @@ class UpperBound(Algorithm):
     """
 
     def run(self):
-         """Runs the Lowerbound algorithm.
+        """Runs the Lowerbound algorithm.
 
         Returns 
         ----------

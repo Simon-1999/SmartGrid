@@ -10,7 +10,7 @@ def plot(district):
     district : District object
     """
 
-    color = {0: "blue", 1:"red" ,2:"yellow",3:"cyan", 4:"magenta"}
+    color = {0: "blue", 1:"red" ,2:"green",3:"cyan", 4:"magenta"}
 
     # configure plot
     fig = plt.figure()
@@ -26,7 +26,7 @@ def plot(district):
         # loop through houses
         for house in district.connections[battery.id]:
             x, y = house.location
-            plt.plot(x, y, 'p', markersize=10, color=color[battery.id])
+            plt.plot(x, y, 'p', markersize=7, color=color[battery.id])
 
             # plot path if house has a cable
             if house.id in district.cables:
@@ -40,7 +40,7 @@ def plot(district):
                     y_path.append(y)
 
                 # plot path
-                plt.plot(x_path, y_path, '-', color=color[battery.id])
+                plt.plot(x_path, y_path, '-', color=color[battery.id], alpha=0.8)
  
     ax.set_xticks(numpy.arange(0, 51, 1), minor=True)
     ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
