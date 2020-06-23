@@ -13,9 +13,6 @@ class UpperBound(Algorithm):
             # connect house and battery
             self.district.add_connection(battery, house)
 
-        # print results
-        self.print_result(self.district)
-
         # set district cables
         self.set_district_cables(self.district)
 
@@ -24,11 +21,9 @@ class UpperBound(Algorithm):
 
     def get_furthest_battery(self, house):
         """
-        Calculates which battery in the list is the nearest to the given house
+        Calculates which battery in the list is the furthest to the given house
         """
 
         batteries = self.district.batteries
         
-        batteries.sort(key=lambda battery: self.calc_dist(house.location, battery.location), reverse=True)
-    
-        return batteries[0]
+        return max(batteries, key=lambda battery: self.calc_dist(house.location, battery.location))

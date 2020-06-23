@@ -35,9 +35,6 @@ class LowerBound(Algorithm):
             # connect house and battery
             self.district.add_connection(battery, house)
 
-        # print results
-        self.print_result(self.district)
-
         # set district cables
         self.set_district_cables(self.district)
 
@@ -59,7 +56,5 @@ class LowerBound(Algorithm):
         """
 
         batteries = self.district.batteries
-        
-        batteries.sort(key=lambda battery: self.calc_dist(house.location, battery.location))
     
-        return batteries[0]
+        return min(batteries, key=lambda battery: self.calc_dist(house.location, battery.location))

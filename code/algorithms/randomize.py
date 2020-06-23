@@ -21,7 +21,7 @@ class Randomize(Algorithm):
             self.iterations += 1
 
             # randomize houses list
-            self.order_random(self.district.get_houses())
+            random.shuffle(self.district.houses)
 
             # add cable connections
             self.assign_connections()
@@ -41,12 +41,6 @@ class Randomize(Algorithm):
 
         return self.district
 
-    def order_random(self, list_objects):
-        """
-        Random order house
-        """
-
-        return random.shuffle(list_objects)
 
     def assign_connections(self):
         """
@@ -54,7 +48,7 @@ class Randomize(Algorithm):
         """
 
         # loop through all houses
-        for house in self.district.get_houses():
+        for house in self.district.houses:
 
             # get least used battery
             battery = self.calc_least_used_batt()
@@ -67,5 +61,5 @@ class Randomize(Algorithm):
         Calculate least used battery
         """
 
-        return min(self.district.get_batteries(), key=lambda \
+        return min(self.district.batteries, key=lambda \
             battery: self.district.get_usage(battery))

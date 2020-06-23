@@ -5,7 +5,7 @@ import numpy
 
 from .algorithm import Algorithm
 
-class SharedGreedy(Algorithm):
+class RandomSharedGreedy(Algorithm):
 
     def __init__(self, district):
 
@@ -14,14 +14,11 @@ class SharedGreedy(Algorithm):
         self.iterations = 0
         self.best_total = float('inf')
         self.best_district = copy.deepcopy(district)
-        self.process = {"iterations": [], "best_total": []}
 
         # connectpoints {BATTERY_ID: [LOCATION, LOCATION, LOCATION]}
         self.connectpoints = self.init_connectpoints()
 
     def run(self):
-
-        print("SharedGreedy running... ")
 
         self.district.reset_cables()
 
@@ -55,15 +52,14 @@ class SharedGreedy(Algorithm):
                 self.iterations = i
                 self.best_total = total
                 self.best_district = copy.deepcopy(self.district)
-                self.process["iterations"].append(self.iterations)
-                self.process["best_total"].append(self.best_total)
+
             
             # reset the district cables and connectpoints
             self.district.reset_cables()
             self.connectpoints = self.init_connectpoints()
             
                     
-        return self.best_district, self.process
+        return self.best_district
 
     def get_nearest_connectpoint(self, battery, house):
 

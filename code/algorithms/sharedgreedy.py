@@ -26,7 +26,7 @@ class SharedGreedy(Algorithm):
     get_nearest_connectpoint(battery, house)
         Gets nearest connectpoint for a house 
 
-    get_cable_path(start_location, end_location)
+    get_random_path(start_location, end_location)
         Creates a shortest Manhattan path between two points in a random x,y order
 
     init_connectpoints()
@@ -73,7 +73,7 @@ class SharedGreedy(Algorithm):
                 connectpoint = self.get_nearest_connectpoint(battery, house)   
 
                 # make cable path
-                path = self.get_cable_path(house.location, connectpoint) 
+                path = self.get_random_path(house.location, connectpoint) 
                 self.district.cables[house.id] = path
 
                 # add path to connectpoints
@@ -90,7 +90,7 @@ class SharedGreedy(Algorithm):
         return min(self.connectpoints[battery.id], key=lambda \
             location: self.calc_dist(location, house.location))
 
-    def get_cable_path(self, start_location, end_location):
+    def get_random_path(self, start_location, end_location):
         """Collects necessary x- and y-movements between two locations to create a path with
         the shortest Manhattan distance. The movements are then shuffled to create a random
         order. 

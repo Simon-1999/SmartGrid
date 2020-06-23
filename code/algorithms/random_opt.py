@@ -10,10 +10,9 @@ class RandomOptimize(Algorithm):
         while True:
 
             self.iterations += 1
-            print(self.iterations)
         
             # randomize houses list
-            self.order_random(self.district.get_houses())
+            random.shuffle(self.district.houses)
 
             self.assign_connections()
 
@@ -22,19 +21,11 @@ class RandomOptimize(Algorithm):
 
             self.district.reset_connections()
 
-        self.print_result(self.district)
-
         # set district cables
         self.set_district_cables(self.district)
 
         return self.district
 
-    def order_random(self, list_objects):
-        """
-        Random order house
-        """
-
-        return random.shuffle(list_objects)
 
     def assign_connections(self):
         """
@@ -42,9 +33,9 @@ class RandomOptimize(Algorithm):
         """
 
         # loop through all houses
-        for house in self.district.get_houses():
+        for house in self.district.houses:
 
-            battery = self.get_nearest_battery(house)
+            battery = self.get_nearest_free_battery(house)
 
             if not battery:
                 return
@@ -53,16 +44,15 @@ class RandomOptimize(Algorithm):
             self.district.add_connection(battery, house)
 
 
-    def get_nearest_battery(self, house):
+    def get_nearest_free_battery(self, house):
         """
         Calculates which battery in the list is the nearest to the given house
         """
 
         possible_batteries = self.district.get_possible_batteries(house)
-        
-        possible_batteries.sort(key=lambda battery: self.calc_dist(house.location, battery.location))
 
         if not possible_batteries:
             return None
     
-        return possible_batteries[0]
+        return min(possible_batteries, key=lambda battery: self.calc_dist(house.location, battery.location))
+        

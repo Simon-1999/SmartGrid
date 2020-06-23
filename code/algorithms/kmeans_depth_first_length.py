@@ -9,6 +9,7 @@ import copy
 from .algorithm import Algorithm
 
 CAPACITY_OFFSET = 300
+N = 2
 
 class DepthFirstLength(Algorithm):
     """
@@ -39,7 +40,7 @@ class DepthFirstLength(Algorithm):
 
     """
 
-    def __init__(self, district, clusters, n):
+    def __init__(self, district, clusters):
         """Parameters
         ----------
         district : District object
@@ -47,8 +48,6 @@ class DepthFirstLength(Algorithm):
         clusters : list
             Formed clusters in the district
 
-        n : int
-            Amount of branches to prune 
         """
         self.district = district
         self.connections = self.remove_connections(self.district.connections)
@@ -59,8 +58,6 @@ class DepthFirstLength(Algorithm):
         self.best_total = float('inf')
         self.longest_connection = float('inf')
         self.iterations = 0
-        self.n = n
-        self.process = []
 
     def run(self):
         """
@@ -89,8 +86,6 @@ class DepthFirstLength(Algorithm):
         # update the input district with the best result found
         self.district.connections = self.best_solution
 
-        # set the district cables
-        self.set_cables(self.district)
 
         return self.district
     
@@ -120,7 +115,7 @@ class DepthFirstLength(Algorithm):
             
             children.append([battery, house])
             
-        self.add_best_children(connections, children, self.n)
+        self.add_best_children(connections, children, N)
         
     
     def check_solution(self, new_connections):
@@ -129,7 +124,6 @@ class DepthFirstLength(Algorithm):
         
 
         new_connection = self.get_longest_connection(new_connections)
-        #print(new_connection)
         old_connection = self.longest_connection
 
         # update the cost if the district total is less
@@ -140,12 +134,6 @@ class DepthFirstLength(Algorithm):
 
             # save the process
             solution = {"iter": self.iterations, "best_total": total, "longest_connection": self.longest_connection}
-            self.process.append(solution)
-            
-            print(self.iterations)
-            print(len(self.states))
-            print(f"longest connection: {self.longest_connection}")
-            print(f"New best value: {total}")
 
     
     def remove_connections(self, connections):
@@ -163,7 +151,6 @@ class DepthFirstLength(Algorithm):
         houses = []
         for value in connections.values():
             houses += value
-        print(f"amount of connections: {len(houses)}")
         return connections
 
     def calc_battery_connections_costs(self,connections, battery):
