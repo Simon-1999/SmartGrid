@@ -16,5 +16,6 @@ class House():
         self.location = location
         self.output = output
         
+        
     def __repr__(self):
         return f"<HOUSE id: {self.id}, location: {self.location}>"

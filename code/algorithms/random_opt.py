@@ -28,6 +28,7 @@ class RandomOptimize(Algorithm):
         Returns the nearest free battery to the house
     
     """
+    
     def run(self): 
         """Runs the Randomize algorithm.
 

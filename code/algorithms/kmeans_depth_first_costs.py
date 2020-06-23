@@ -144,7 +144,6 @@ class DepthFirstCosts(Algorithm):
         Parameters
         ----------
         new_connections : dict
-
         """
 
         res = self.district.calc_connection_costs()
@@ -156,6 +155,8 @@ class DepthFirstCosts(Algorithm):
         if new_total <= old_total:
             self.best_solution = new_connections
             self.best_total = new_total
+
+            print(f'Found better solution, costs: {new_total}, iterations {self.iterations}')
 
 
     def get_best_child(self, children, n):
@@ -254,5 +255,3 @@ class DepthFirstCosts(Algorithm):
         costs =  connections_cost + batt_cost
 
         return costs
-
-                

@@ -1,4 +1,4 @@
-"""Representation of a a SmartGrid district. A district is defined by its batteries and
+"""Representation of a SmartGrid district. A district is defined by its batteries and
 houses, and an ID. Next, while running any algorithm, connections and cables are added to create a 
 final configuration. 
 """
@@ -41,8 +41,11 @@ class District():
     reset_cables()
         Remove all cable data from the district
         
-    def get_empty_house()
+    get_empty_house()
         Find a house that is not yet connected
+
+    get_empty_houses()
+        Finds all free houses in connections
 
     get_possible_batteries(house)
         Get all available batteries for a house
@@ -71,10 +74,12 @@ class District():
     all_houses_connected()
         Check if all houses have a unique cable
 
+    get_house_battery(house)
+        Get battery connected to house
+
     print_district_status()
         Prints a general overview of the status of the district parameters
         
-
     """
 
     def __init__(self, uid, batteries_file, houses_file):
@@ -192,6 +197,7 @@ class District():
         for battery in self.batteries:
             self.connections[battery.id] = []
 
+
     def add_cable(self, house, path):
         """Adds a cable path to the specified house
 
@@ -230,8 +236,9 @@ class District():
         
         return None
 
+
     def get_empty_houses(self):
-        """Returns houses hat are not yet connected, if there is one.
+        """Finds all free houses in connections.
 
         Returns
         ----------
@@ -290,6 +297,7 @@ class District():
 
         return usage
 
+
     def is_overload(self):
         """Returns if the usage of any battery exceeds capacity.
 
@@ -321,6 +329,7 @@ class District():
         """
 
         return self.get_usage(battery) + house.output > battery.capacity
+
 
     def calc_battery_connections_costs(self, battery):
         """Calculates costs of current connections to given battery.
@@ -377,6 +386,7 @@ class District():
 
         cables_cost = 0
         batt_cost = 0
+
         for battery in self.batteries:
             batt_cost += battery.cost
         
@@ -421,13 +431,21 @@ class District():
 
         return houses_connected == 150
 
+
     def get_house_battery(self, house):
+        """Get battery connected to house
+
+        Returns
+        ----------
+        Battery object
+        """
 
         for battery in self.batteries:
             houses = self.connections[battery.id]
 
             if house in houses:
                 return battery
+
 
     def print_district_status(self):
         """Prints a general overview of the status of the district parameters

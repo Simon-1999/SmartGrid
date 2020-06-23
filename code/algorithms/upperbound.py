@@ -41,6 +41,7 @@ class UpperBound(Algorithm):
         # return district
         return self.district
 
+
     def get_furthest_battery(self, house):
         """
         Calculates which battery in the list is the furthest to the given house

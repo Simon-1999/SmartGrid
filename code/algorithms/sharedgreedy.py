@@ -80,8 +80,8 @@ class SharedGreedy(Algorithm):
                 for point in path:
                     self.connectpoints[battery.id].append(point)  
 
-        print("SharedGreedy done ")
         return self.district
+
 
     def get_nearest_connectpoint(self, battery, house):
         """Finds the nearest connectpoint for a house to connect to. 
@@ -89,6 +89,7 @@ class SharedGreedy(Algorithm):
 
         return min(self.connectpoints[battery.id], key=lambda \
             location: self.calc_dist(location, house.location))
+
 
     def get_random_path(self, start_location, end_location):
         """Collects necessary x- and y-movements between two locations to create a path with

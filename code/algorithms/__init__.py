@@ -1,8 +1,10 @@
 """Algorithms for finding configurations and building cables in a SmartGrid district.
 
 Algorithms in this package: 
-ConfigFinder 
-GroupSwap 
+ConfigFinderCosts
+ConfigFinderLength
+Upperbound
+Lowerbound
 Kmeans 
 KmeansSorting 
 DepthFirstCosts
@@ -10,6 +12,7 @@ DepthFirstLength
 SharedGreedy
 RandomSharedGreedy
 Simple Swap
+GroupSwap 
 Randomize
 RandomOptimize 
 """

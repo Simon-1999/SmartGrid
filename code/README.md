@@ -26,10 +26,10 @@ The following list describes the most important folders and files in the *code* 
   - **/classes/battery.py**
   - **/classes/district.py**
   - **/classes/house.py**
-- **/visualization**
-  - **/visualization/draw.py**
-  - **visualization/loadconnections.py**
-  - **visualization/make_output.py**
+- **/misc**
+  - **/misc/draw.py**
+  - **/misc/loadconnections.py**
+  - **/misc/make_output.py**
 
 ## Classes
 
@@ -109,4 +109,4 @@ A district is plotted with color-coding of houses and the batteries they are con
 
 ### Load connections
 
-Since our depth first algorithms take a very long runtime, we have saved some of the configurations we found in our own runs. If you wish to visualize these results without having to wait for a depth first algorithm to have finished, you can use this module to create a visualization without actually running the algorithm.
+Since our depth first algorithms take a very long runtime, we have saved some of the configurations we found in our own runs. If you wish to visualize these results without having to wait for a depth first algorithm to have finished, you can use this module to create a visualization without actually running the algorithm. The output files can be found in the folder **/output/depth_first_results**.

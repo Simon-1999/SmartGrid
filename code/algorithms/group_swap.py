@@ -63,6 +63,7 @@ class GroupSwap(Algorithm):
         self.min_costs = self.district.calc_connection_costs()['total']
         self.solution_found = False
 
+
     def run(self):
         """Runs the GroupSwap algorithm
 
@@ -110,6 +111,7 @@ class GroupSwap(Algorithm):
 
         return self.district
 
+
     def assign_connections(self):
         """Assign house to cable an add this information to the district.
 
@@ -138,6 +140,7 @@ class GroupSwap(Algorithm):
 
         return True
 
+
     def remove_longest_connections(self, sorted_connections, groupsize):
         """Returns list of longest cables in the district of size groupsize
 
@@ -163,9 +166,12 @@ class GroupSwap(Algorithm):
     def sort_connections(self):
         """
         Creates sorted list of the current battery house connections sorted by length
+
+        Returns
+        ----------
+        list
         """
-        # create battery house list
-        # [[BATTERY, HOUSE], [BATTERY, HOUSE], etc.]
+        # create battery house list, [[BATTERY, HOUSE], [BATTERY, HOUSE], etc.]
         connection_list =[]
         for battery in self.district.batteries:
             houses = self.district.connections[battery.id]
@@ -179,13 +185,15 @@ class GroupSwap(Algorithm):
     def get_nearest_free_battery(self, house):
         """
         Calculates which battery in the list is the nearest to the given house
+
+        Returns
+        ----------
+        Battery object
         """
 
         possible_batteries = self.district.get_possible_batteries(house)
-        
-        possible_batteries.sort(key=lambda battery: self.calc_dist(house.location, battery.location))
 
         if not possible_batteries:
             return None
-    
-        return possible_batteries[0]
+           
+        return min(possible_batteries, key=lambda battery: self.calc_dist(house.location, battery.location))

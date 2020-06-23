@@ -1,8 +1,6 @@
 """Class to inherit in other algorithms
 
 The Algorithm class has a district as attribute which can be manipulated by the algorithms. 
-print_result() prints the result of an algorithm regarding batteries, houses, validity, costs and iterations. 
-calc_dist() is used to calculate the distance between two grid points. 
 """
 
 class Algorithm():
@@ -66,6 +64,7 @@ class Algorithm():
 
         return abs(x1 - x2) + abs(y1 - y2)
 
+
     def set_district_cables(self, district):
         """Sets the cables in a given district that has connections
 
@@ -125,6 +124,7 @@ class Algorithm():
 
         return path    
   
+
     def prompt_iterations(self, default):
         """ 
         Returns number of iterations from user input
@@ -136,9 +136,17 @@ class Algorithm():
 
         message = f"Set iterations, for default value {default} press enter\n"
 
-        answer = input(message)
+        while True:
 
-        if answer == '':
-            return default  
+            answer = input(message)
 
-        return int(answer)  
+            if answer == '':
+                return default  
+
+            if not answer.isnumeric():
+                continue
+        
+            if int(answer) <= 0:
+                continue
+
+            return int(answer)

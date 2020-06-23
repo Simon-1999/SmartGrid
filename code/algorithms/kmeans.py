@@ -1,4 +1,4 @@
-"""Divides a district in Kmeans clusters based on houses' distances to batteries.
+"""Divides a district in Kmeans clusters based on houses distances to batteries.
 
 The algorithm creates centroids for each battery in the district, and keeps modifying these to create a cluster
 of houses with similar distances to a battery, and keeps this cluster as close to the battery as possible. 

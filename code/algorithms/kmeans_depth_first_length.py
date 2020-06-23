@@ -37,7 +37,7 @@ class DepthFirstLength(Algorithm):
         Checks for the best solution and accepts that state.
 
     remove_connections(connections)
-        Remove connections from a district
+        Remove connections from a district.
 
     calc_battery_connection_costs(connections, battery)
         Calculates costs of connection to one battery.
@@ -62,9 +62,9 @@ class DepthFirstLength(Algorithm):
 
         clusters : list
             Formed clusters in the district
-
         """
-        self.district = district
+
+        self.district = copy.deepcopy(district)
         self.connections = self.remove_connections(self.district.connections)
         self.states = [copy.copy(self.connections)]
         self.clusters = clusters
@@ -73,6 +73,7 @@ class DepthFirstLength(Algorithm):
         self.best_total = float('inf')
         self.longest_connection = float('inf')
         self.iterations = 0
+
 
     def run(self):
         """Runs the algorithm untill all possible states are visited.
@@ -108,6 +109,7 @@ class DepthFirstLength(Algorithm):
 
         return self.district
     
+
     def get_next_state(self):
         """Get next state from the back of the stack.
 
@@ -117,6 +119,7 @@ class DepthFirstLength(Algorithm):
         """
 
         return self.states.pop()
+
 
     def build_children(self, connections, house):
         """Creates all possible child-states and adds them to the list of states.
@@ -146,7 +149,6 @@ class DepthFirstLength(Algorithm):
         Parameters
         ----------
         new_connections : dict
-
         """
 
         new_connection = self.get_longest_connection(new_connections)
@@ -158,8 +160,7 @@ class DepthFirstLength(Algorithm):
             self.longest_connection = new_connection
             total = self.calc_connection_costs(new_connections)
 
-            # save the process
-            solution = {"iter": self.iterations, "best_total": total, "longest_connection": self.longest_connection}
+            print(f'Found better solution, costs: {total}, iterations {self.iterations}')
 
     
     def remove_connections(self, connections):
@@ -189,6 +190,7 @@ class DepthFirstLength(Algorithm):
             houses += value
         return connections
 
+
     def calc_battery_connections_costs(self,connections, battery):
         """
         Calculates costs of connection to battery
@@ -201,6 +203,7 @@ class DepthFirstLength(Algorithm):
             costs += self.calc_dist(house.location, battery.location) * 9
 
         return costs
+
 
     def calc_connection_costs(self, connections):
         """Calculates costs of connection to one battery.
@@ -226,6 +229,7 @@ class DepthFirstLength(Algorithm):
         costs =  connections_cost + batt_cost
 
         return costs
+
 
     def get_longest_connection(self, connections):
         """Returns the maximum connection distance in a cluster.
@@ -257,7 +261,7 @@ class DepthFirstLength(Algorithm):
 
 
     def get_connection_len(self, battery, house):
-        """Calculates distance of a house to a cluster centroid of a certain batteries' cluster
+        """Calculates distance of a house to a cluster centroid of a certain batteries cluster
 
         Parameters
         ----------
@@ -275,6 +279,7 @@ class DepthFirstLength(Algorithm):
         
         return self.calc_dist(centroid, house.location)
 
+
     def add_best_children(self,connections, children, n):
         """Adds the pruned child states to the stack.
 
@@ -288,6 +293,7 @@ class DepthFirstLength(Algorithm):
         n : int
             Amount of pruning to do
         """
+
         children.sort(key=lambda temp: self.get_connection_len(temp[0], temp[1]))
 
         for battery, house in children[:n]:
@@ -299,9 +305,3 @@ class DepthFirstLength(Algorithm):
 
             new_connections[battery.id].append(house)
             self.states.append(new_connections)
-
-    
-
-                
-
-        

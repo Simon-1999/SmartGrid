@@ -50,6 +50,7 @@ class RandomSharedGreedy(Algorithm):
         # connectpoints {BATTERY_ID: [LOCATION, LOCATION, LOCATION]}
         self.connectpoints = self.init_connectpoints()
 
+
     def run(self):
         """Runs the RandomSharedGreedy algorithm
 

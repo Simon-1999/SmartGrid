@@ -1,11 +1,12 @@
-import random 
-from .algorithm import Algorithm
-
 """ Finds a solution by randomly connecting houses to batteries until a valid configuration emerges.
 
 The algorithm the shuffles the list of houses in the district and connects each house 
 to a remaining battery with the most capacity left. This process is repeated until a valid solution is found.
 """
+
+import random 
+
+from .algorithm import Algorithm
 
 class Randomize(Algorithm):
     """ Randomly connects houses to batteries in a district and returns the district once a valid solution is found.
@@ -57,6 +58,7 @@ class Randomize(Algorithm):
 
         return self.district
 
+
     def assign_connections(self):
         """Assign houses to batteries and creates connections
         """
@@ -69,6 +71,7 @@ class Randomize(Algorithm):
 
             # add cable 
             self.district.add_connection(battery, house)
+
 
     def calc_least_used_batt(self):
         """Calculate least used battery

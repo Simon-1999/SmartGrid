@@ -68,6 +68,7 @@ class ConfigFinderCosts(Algorithm):
         self.min_costs = float('inf')
         self.best_connections = copy.copy(self.district.connections)   
 
+
     def run(self):
         """Runs the ConfigFinderCosts algorithm
 
@@ -121,6 +122,7 @@ class ConfigFinderCosts(Algorithm):
 
         return self.district        
 
+
     def nearest_free_battery(self, house):
         """
         Calculates which battery belongs to the cluster nearest to the given house
@@ -153,7 +155,6 @@ class ConfigFinderCosts(Algorithm):
         Paramaters
         ----------
         CAPACITY_OFFSET : int
-        
         """
 
         # remove connections
@@ -166,6 +167,7 @@ class ConfigFinderCosts(Algorithm):
 
                 # add removed hosue to free houses
                 self.free_houses.append(removed_house)
+
 
     def add_connections(self):
         """ Randomly shuffles the list of free houses and adds connections between the free houses
@@ -181,4 +183,3 @@ class ConfigFinderCosts(Algorithm):
 
             if battery != None:
                 self.district.add_connection(battery, house)
-                 

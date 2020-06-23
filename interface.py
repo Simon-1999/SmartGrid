@@ -2,7 +2,7 @@
 which algorithm to run.
 """
 
-from code import classes, algorithms, visualization
+from code import classes, algorithms, misc
 import os
 
 class Interface():
@@ -302,13 +302,13 @@ class Interface():
 
         # show cost scheme and visualization of cables
         district.print_district_status()
-        visualization.plot(district)
+        misc.plot(district)
 
         # aks for making outputfile
         message = 'Do you want to generate an output file y/n \n'
         options = ['y', 'n']
         if self.input_validation(options, message) == 'y':
-            visualization.output_doc(district, self.shared) 
+            misc.output_doc(district, self.shared) 
 
     def get_message(self, shortcut, algorithm):
         """
