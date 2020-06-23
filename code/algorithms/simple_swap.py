@@ -31,7 +31,7 @@ class SimpleSwap(Algorithm):
         
             self.swap(longest_connection, swap_connection)
             i = 0
-            self.sort_connections()
+            sorted_connections = self.sort_connections()
 
         # set district cables
         self.set_district_cables(self.district)
@@ -51,7 +51,9 @@ class SimpleSwap(Algorithm):
             for house in houses:
                 connection_list.append([battery, house])
 
-        return connection_list.sort(key=lambda connection: self.calc_dist(connection[1].location, connection[0].location), reverse=True)
+        connection_list.sort(key=lambda connection: self.calc_dist(connection[1].location, connection[0].location), reverse=True)
+
+        return connection_list
 
     def find_swap(self, connection):
         """

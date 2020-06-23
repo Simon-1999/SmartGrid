@@ -49,7 +49,7 @@ class DepthFirstLength(Algorithm):
             Formed clusters in the district
 
         """
-        self.district = district
+        self.district = copy.deepcopy(district)
         self.connections = self.remove_connections(self.district.connections)
         self.states = [copy.copy(self.connections)]
         self.clusters = clusters

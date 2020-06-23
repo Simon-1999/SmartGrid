@@ -99,9 +99,9 @@ class Kmeans(Algorithm):
             battery = cluster['battery']
 
             for house in houses:
-                self.district.add_connections(battery, house)
+                self.district.add_connection(battery, house)
                   
-
+                  
     def get_nearest_cluster(self, clusters, house):
         """Finds nearest cluster centroid to a house.
 
