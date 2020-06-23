@@ -28,16 +28,19 @@ def plot(district):
             x, y = house.location
             plt.plot(x, y, 'p', markersize=10, color=color[battery.id])
 
-            # save cable path in list
-            x_path = []
-            y_path = []
+            # plot path if house has a cable
+            if house.id in district.cables:
 
-            for location in district.cables[house.id]:
-                x, y = location
-                x_path.append(x)
-                y_path.append(y)
+                # save cable path in list
+                x_path = []
+                y_path = []
+                for location in district.cables[house.id]:
+                    x, y = location
+                    x_path.append(x)
+                    y_path.append(y)
 
-            plt.plot(x_path, y_path, '-', color=color[battery.id])
+                # plot path
+                plt.plot(x_path, y_path, '-', color=color[battery.id])
  
     ax.set_xticks(numpy.arange(0, 51, 1), minor=True)
     ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
