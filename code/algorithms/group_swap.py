@@ -91,8 +91,7 @@ class GroupSwap(Algorithm):
                     costs = self.district.calc_connection_costs()['total']
 
                     # check if solution is better
-                    if costs < self.min_costs:
-                        # print(f"new: {costs}, improved: {min_costs - costs}, groupsize: {groupsize},iteration: {i}")   
+                    if costs < self.min_costs:  
                         self.min_costs = costs
                         self.best_solution = copy.deepcopy(self.district)
                         self.solution_found = True
@@ -100,11 +99,10 @@ class GroupSwap(Algorithm):
             # for next group work with best found solution
             if self.solution_found:
                 self.district = self.best_solution
-                solution_found = False      
-                                 
-        self.print_result(self.best_solution)
+                self.solution_found = False      
 
-        print("group_swap done")
+        # set district cables
+        self.set_district_cables(self.district)
 
         return self.district
 
@@ -132,7 +130,7 @@ class GroupSwap(Algorithm):
                     return False
 
                 # add connection
-                self.district.connections[battery.id].append(house)
+                self.district.add_connection(battery, house)
 
         return True
 
@@ -153,7 +151,9 @@ class GroupSwap(Algorithm):
         
         # loop through the connections and remove the house from the battery in the connections dict
         for battery, house in longest_connections:
-            self.district.connections[battery.id].remove(house)
+
+            # remove connection
+            self.district.remove_connection(battery, house)
 
 
     def sort_connections(self):

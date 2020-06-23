@@ -20,11 +20,15 @@ class Algorithm():
 
     Methods
     ----------
-    print_result(district)
-        Prints general overview of a district
 
     calc_dist(location1, location2)
         Calculates Manhattan distance between two grid points
+
+    set_district_cables(district)
+        Sets the cables in a given district that has connections
+
+    get_path(start_location, end_location)
+        Returns the pathway of a cable
 
     """
 
@@ -41,25 +45,6 @@ class Algorithm():
         self.district = district
         self.iterations = 0
 
-    def print_result(self, district):
-        """Prints general overview of an algorithm's result(validity, iterations, costs)
-
-        Parameters
-        ----------
-        district : District object
-        """
-
-        print("+---------------------------------+")
-        if not district.is_overload() and district.all_houses_connected():
-            print(f"| {'configuration:':<18} {'valid':>12} |")
-        else:
-            print(f"| {'configuration:':<18} {'invalid':>12} |")
-        print(f"| {'iterations:':<18} {self.iterations:>12} |")
-        costs = district.calc_connection_costs()
-        print(f"| {'connections:':<18} {costs['connections']:>12} |")
-        print(f"| {'batteries:':<18} {costs['batteries']:>12} |")
-        print(f"| {'total:':<18} {costs['total']:>12} |")
-        print("+---------------------------------+")  
 
     def calc_dist(self, location1, location2):
         """Calculates Manhattan distance between two points
@@ -82,7 +67,7 @@ class Algorithm():
         return abs(x1 - x2) + abs(y1 - y2)
 
     def set_district_cables(self, district):
-        """Sets the cables in a given district that has connections.
+        """Sets the cables in a given district that has connections
 
         Parameters
         ----------
@@ -99,7 +84,7 @@ class Algorithm():
 
                 path = self.get_path(house.location, battery.location)
 
-                district.cables[house.id] = path
+                district.add_cable(house, path)
 
 
     def get_path(self, start_location, end_location):

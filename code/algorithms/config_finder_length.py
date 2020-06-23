@@ -65,12 +65,10 @@ class ConfigFinderLength(Algorithm):
             for key, value in init_connections.items():
                 connections[key] = copy.copy(value)
 
-            self.district.connections = connections
+            self.district.set_connections(connections)
 
         # set best connections
-        self.district.connections = self.best_connections
-
-        self.print_result(self.district)
+        self.district.set_connections(self.best_connections)
 
         # set the district cables
         self.set_cables(self.district)
@@ -89,14 +87,6 @@ class ConfigFinderLength(Algorithm):
                 return cluster['battery']
 
         return None
-
-    def free_battery(self, house):
-        """
-        Equivalent to nearest_free_battery but without sorting based on distance
-        """
-        for cluster in self.clusters:
-            if not self.district.calc_overload(cluster['battery'], house):
-                return cluster['battery']
 
 
     def remove_connections(self, CAPACITY_OFFSET):
@@ -120,21 +110,6 @@ class ConfigFinderLength(Algorithm):
         for house in self.free_houses:
             
             battery = self.nearest_free_battery(house)
-
-            if battery != None:
-                self.district.add_connection(battery, house)
-
-
-    def add_random_connections(self):
-        """
-        Equivalent to add_connections(self), but chooses random battery with free capacity
-        instead of using the nearness-heuristic
-        """
-        random.shuffle(self.free_houses)
-
-        for house in self.free_houses:
-            # find random battery that has capacity
-            battery = self.free_battery(house)
 
             if battery != None:
                 self.district.add_connection(battery, house)

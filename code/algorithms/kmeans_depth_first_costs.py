@@ -1,22 +1,27 @@
+"""Our K-Means DepthFirstCosts algorithm performs on a K-Means sorted district. It determines houses to check
+based on a capacity offset. These are removed from the batteries, to create free space to switch houses in.
+The algorithm then does a depth first search for the best configuration based on the minimal cost of a state it can find by
+reassigning all free houses. 
+Pruning is done by selecting the two best options of the five diversions from every branch. 
+"""
+
 import copy
 from .algorithm import Algorithm
 
 CAPACITY_OFFSET = 200
+N = 2
 
 class DepthFirstCosts(Algorithm):
     """
     A Depth First algorithm that builds a 
     """
-    def __init__(self, district, n):
+    def __init__(self, district):
         self.district = copy.deepcopy(district)
         self.connections = self.remove_connections(self.district.connections)
         self.states = [copy.copy(self.connections)]
-
         self.best_solution = None
         self.best_total = float('inf')
         self.iterations = 0
-        self.n = n
-        self.process = []
 
     def get_next_state(self):
         """
@@ -46,7 +51,7 @@ class DepthFirstCosts(Algorithm):
             new_connections[battery.id].append(house)
             children.append(new_connections)
 
-        best_children = self.get_best_child(children, n=self.n)
+        best_children = self.get_best_child(children, N)
         self.states += best_children
         
     
@@ -64,9 +69,6 @@ class DepthFirstCosts(Algorithm):
         if new_total <= old_total:
             self.best_solution = new_connections
             self.best_total = new_total
-            solution = {"iter": self.iterations, "best_total": self.best_total}
-            self.process.append(solution)
-
 
     def run(self):
         """
@@ -90,13 +92,10 @@ class DepthFirstCosts(Algorithm):
                 # continue looking for better districts.
                 self.check_solution(new_connections)
 
-            self.iterations += 
+            self.iterations += 1
             
         # update the input district with the best result found
-        self.district.connections = self.best_solution
-
-        # set the district cables
-        self.set_cables(self.district)
+        self.district.set_connections(self.best_solution)
 
         return self.district
     
@@ -127,7 +126,7 @@ class DepthFirstCosts(Algorithm):
         houses = []
         for value in connections.values():
             houses += value
-        print(f"amount of connections: {len(houses)}")
+
         return connections
 
     def calc_battery_connections_costs(self,connections, battery):

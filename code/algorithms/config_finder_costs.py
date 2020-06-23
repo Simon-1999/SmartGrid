@@ -24,8 +24,6 @@ class ConfigFinderCosts(Algorithm):
         self.best_connections = copy.copy(self.district.connections)   
 
     def run(self):
-        
-        print("ConfigFinder running...")
 
         # save initial connections
         init_connections = {}
@@ -63,16 +61,13 @@ class ConfigFinderCosts(Algorithm):
             connections = {}
             for key, value in init_connections.items():
                 connections[key] = copy.copy(value)
-
-            self.district.connections = connections
-
             
+            # set connections
+            self.district.set_connections(connections)
+
 
         # set best connections
-        self.district.connections = self.best_connections
-
-        # results
-        self.print_result(self.district)
+        self.district.set_connections(self.best_connections)
 
         # set the district cables
         self.set_cables(self.district)
@@ -91,14 +86,6 @@ class ConfigFinderCosts(Algorithm):
                 return cluster['battery']
 
         return None
-
-    def free_battery(self, house):
-        """
-        Equivalent to nearest_free_battery but without sorting based on distance
-        """
-        for cluster in self.clusters:
-            if not self.district.calc_overload(cluster['battery'], house):
-                return cluster['battery']
 
 
     def remove_connections(self, CAPACITY_OFFSET):
@@ -125,37 +112,4 @@ class ConfigFinderCosts(Algorithm):
 
             if battery != None:
                 self.district.add_connection(battery, house)
-
-
-    def add_random_connections(self):
-        """
-        Equivalent to add_connections(self), but chooses random battery with free capacity
-        instead of using the nearness-heuristic
-        """
-        random.shuffle(self.free_houses)
-
-        for house in self.free_houses:
-            # find random battery that has capacity
-            battery = self.free_battery(house)
-
-            if battery != None:
-                self.district.add_connection(battery, house)
                  
-
-    def get_longest_connection(self, connections):
-
-        max_dist = 0
-
-        # loop through clusters
-        for cluster in self.clusters:
-
-            # loop through houses in cluster
-            for house in connections[cluster['battery'].id]:
-
-                dist = self.calc_dist(house.location, cluster['centroid'])
-
-                # save maximum distance
-                if dist > max_dist:
-                    max_dist = dist
-
-        return max_dist

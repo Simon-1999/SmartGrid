@@ -30,9 +30,6 @@ class Kmeans(Algorithm):
 
     calc_centroid(houses)
         Calculates centroid of a list of houses
-
-    plot_cluster(district, clusters)
-        Plots data points with respect to their clusters
     """
 
     def run(self):
@@ -81,7 +78,6 @@ class Kmeans(Algorithm):
             else:
                 break
 
-        self.plot_cluster(self.district, clusters)
         self.make_connections(clusters)
         
         return self.district, clusters
@@ -159,40 +155,3 @@ class Kmeans(Algorithm):
             total_y += y_house
         
         return (float(total_x/len(houses)), float(total_y/len(houses)))
-
-
-    def plot_cluster(self, district, clusters):
-        """Plots color-coded district to visualize the clusters
-
-        Parameters
-        ----------
-        district : District object
-
-        clusters : list
-        """
-
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1) 
-        plt.title(f'Kmeans clustering of district{district.id}')
-
-        color = {0: "blue", 1:"red" ,2:"yellow",3:"cyan", 4:"magenta"} 
-
-        for cluster in clusters:  
-            for house in cluster['houses']:            
-                x, y = house.location
-                plt.plot(x, y, 'p', color=color[cluster['battery'].id], markersize=7)
-
-            x, y = cluster['centroid']
-            plt.plot(x, y, 'k+', markersize=25)
-
-        # loop through batteries
-        for battery in district.batteries:
-            x, y = battery.location
-            plt.plot(x, y, 'ks', label = f'battery{battery.id}', color=color[battery.id], markersize=10, alpha=0.5)
-
-        # plot district  
-        ax.set_xticks(numpy.arange(0, 51, 1), minor=True)
-        ax.set_yticks(numpy.arange(0, 51, 1), minor=True)
-        ax.grid(which='minor', alpha=0.2)
-        plt.legend()
-        plt.show()
