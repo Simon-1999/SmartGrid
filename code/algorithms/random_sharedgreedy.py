@@ -5,6 +5,8 @@ import numpy
 
 from .algorithm import Algorithm
 
+ITERATIONS = 3000
+
 class RandomSharedGreedy(Algorithm):
 
     def __init__(self, district):
@@ -20,9 +22,12 @@ class RandomSharedGreedy(Algorithm):
 
     def run(self):
 
+        # prompt the user for iterations
+        iterations = self.prompt_iterations(default=ITERATIONS)
+
         self.district.reset_cables()
 
-        for i in range(3000):
+        for i in range(iterations):
             # loop through batteries
             for battery in self.district.batteries:
 

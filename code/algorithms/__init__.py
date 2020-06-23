@@ -7,8 +7,9 @@ Kmeans
 KmeansSorting 
 DepthFirstCosts
 DepthFirstLength
-SharedGreedy 
-Simple swap
+SharedGreedy
+RandomSharedGreedy
+Simple Swap
 Randomize
 RandomOptimize 
 """
@@ -24,6 +25,7 @@ from .kmeans_depth_first_length import DepthFirstLength
 from .kmeans_sorted import KmeansSorting
 from .randomize import Randomize
 from .sharedgreedy import SharedGreedy
+from .random_sharedgreedy import RandomSharedGreedy
 from .randomize import Randomize
 from .random_opt import RandomOptimize
 from .simple_swap import SimpleSwap

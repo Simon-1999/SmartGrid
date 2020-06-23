@@ -14,8 +14,6 @@ class Randomize(Algorithm):
 
     def run(self):
 
-        print("randomize running... ")
-
         while True:
 
             self.iterations += 1
@@ -32,15 +30,10 @@ class Randomize(Algorithm):
 
             self.district.reset_connections()
 
-        self.print_result(self.district)
-
         # set district cables
         self.set_district_cables(self.district)
 
-        print("randomize done")
-
         return self.district
-
 
     def assign_connections(self):
         """

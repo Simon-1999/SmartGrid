@@ -84,7 +84,7 @@ class DepthFirstLength(Algorithm):
             self.iterations += 1
 
         # update the input district with the best result found
-        self.district.connections = self.best_solution
+        self.district.set_connections(self.best_solution)
 
 
         return self.district
