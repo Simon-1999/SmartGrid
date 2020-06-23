@@ -1,13 +1,13 @@
-import copy
-import random
-
-from .algorithm import Algorithm
-
 """This algorithm performs on a K-Means sorted district. It determines houses to check based on a capacity offset. 
 These are removed from the batteries, to create free space to switch houses in.
 The algorithm then randomly connects the free houses to the battery and calculates the longest connection between a house and battery.
 It does this over multiple iterations and eventually returns the district with the shortest longest connection.
 """
+
+import copy
+import random
+
+from .algorithm import Algorithm
 
 CAPACITY_OFFSET = 350
 ITERATIONS = 50000

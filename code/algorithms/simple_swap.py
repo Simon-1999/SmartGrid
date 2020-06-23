@@ -3,9 +3,8 @@ the longest connection, and searches for a house with similar output. If the swa
 results in lower costs, the houses are swapped regarding their batteries. 
 """
 
-import numpy as np
-import time
 import copy
+
 from .algorithm import Algorithm
 
 class SimpleSwap(Algorithm):

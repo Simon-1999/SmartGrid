@@ -4,7 +4,6 @@ to other districts
 
 from itertools import chain
 from .algorithm import Algorithm
-from .kmeans import Kmeans
 
 class KmeansSorting(Algorithm):
     """Sorts houses in each cluster of a district based on their distance to the closest other cluster. 

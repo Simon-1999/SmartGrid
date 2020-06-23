@@ -1,13 +1,10 @@
-import matplotlib.pyplot as plt
 """Divides a district in Kmeans clusters based on houses' distances to batteries.
 
 The algorithm creates centroids for each battery in the district, and keeps modifying these to create a cluster
 of houses with similar distances to a battery, and keeps this cluster as close to the battery as possible. 
 """
 
-import numpy
 import copy
-import random
 
 from .algorithm import Algorithm
 
@@ -39,6 +36,11 @@ class Kmeans(Algorithm):
         ----------
         District object
             K-Means distributed district
+
+        list
+            dictionaries with cluster centroid locations,
+            lists of houses in the cluster 
+            and the Battery objects
         """
 
         # initialize clusters

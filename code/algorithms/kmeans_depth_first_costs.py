@@ -6,6 +6,7 @@ Pruning is done by selecting the two best options of the five diversions from ev
 """
 
 import copy
+
 from .algorithm import Algorithm
 
 CAPACITY_OFFSET = 200

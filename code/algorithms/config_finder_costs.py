@@ -1,14 +1,13 @@
-import copy
-import random
-
-from .algorithm import Algorithm
-
 """This algorithm performs on a K-Means sorted district. It determines houses to checkbased on a capacity offset. 
 These are removed from the batteries, to create free space to switch houses in.
 The algorithm then randomly connects the free houses to the battery and calculates the total district cost.
 It does this over multiple iterations and eventually returns the district with the cheapest configuration.
 """
 
+import copy
+import random
+
+from .algorithm import Algorithm
 
 CAPACITY_OFFSET = 350
 ITERATIONS = 50000 

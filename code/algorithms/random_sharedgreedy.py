@@ -9,8 +9,6 @@ up connected to their battery.
 
 import copy
 import random
-import matplotlib.pyplot as plt
-import numpy
 
 from .algorithm import Algorithm
 

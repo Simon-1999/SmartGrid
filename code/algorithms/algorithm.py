@@ -5,8 +5,6 @@ print_result() prints the result of an algorithm regarding batteries, houses, va
 calc_dist() is used to calculate the distance between two grid points. 
 """
 
-import copy
-
 class Algorithm():
     """Class where other algorithms can inherit the District object from. 
 
