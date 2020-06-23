@@ -24,6 +24,9 @@ class ConfigFinderCosts(Algorithm):
         self.best_connections = copy.copy(self.district.connections)   
 
     def run(self):
+        
+        # prompt the user for iterations
+        iterations = self.prompt_iterations(default=ITERATIONS)
 
         # save initial connections
         init_connections = {}
@@ -31,7 +34,7 @@ class ConfigFinderCosts(Algorithm):
             init_connections[key] = copy.copy(value)
 
 
-        for i in range(ITERATIONS):
+        for i in range(iterations):
 
             # increment iterations
             self.iterations += 1
@@ -68,9 +71,6 @@ class ConfigFinderCosts(Algorithm):
 
         # set best connections
         self.district.set_connections(self.best_connections)
-
-        # set the district cables
-        self.set_cables(self.district)
 
         return self.district        
 

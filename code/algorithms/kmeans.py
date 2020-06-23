@@ -96,10 +96,10 @@ class Kmeans(Algorithm):
         for cluster in clusters:
             
             houses = cluster['houses']
-            battery_id = cluster['battery'].id
+            battery = cluster['battery']
 
             for house in houses:
-                self.district.connections[battery_id].append(house)
+                self.district.add_connections(battery, house)
                   
 
     def get_nearest_cluster(self, clusters, house):

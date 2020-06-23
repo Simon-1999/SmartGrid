@@ -10,11 +10,13 @@ import random
 
 from .algorithm import Algorithm
 
+ITERATIONS = 1000
+
 class GroupSwap(Algorithm):
     """Repeatedly reassigns longest district cables randomly for #iterations, returns the cheapest found district 
 
     GroupSwap respectively takes the 50 and then 20 longest cables of a district to pull a random sample from and to randomly reassign.
-    This is repeated for every group size for the coded amount of random_iterations. The best found configuration is returned. 
+    This is repeated for every group size for the coded amount of iterations. The best found configuration is returned. 
 
     Attributes
     ----------
@@ -60,7 +62,6 @@ class GroupSwap(Algorithm):
         self.best_solution = copy.deepcopy(district)
         self.min_costs = self.district.calc_connection_costs()['total']
         self.solution_found = False
-        self.random_iterations = 1000
 
     def run(self):
         """Runs the GroupSwap algorithm
@@ -71,9 +72,12 @@ class GroupSwap(Algorithm):
             Lowest cost district the algorithm has found
         """
 
+        # prompt the user for iterations
+        iterations = self.prompt_iterations(default=ITERATIONS)
+
         for groupsize in self.groupsizes:
 
-            for i in range(self.random_iterations):
+            for i in range(iterations):
 
                 # increments iterations
                 self.iterations += 1
